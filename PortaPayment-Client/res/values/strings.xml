@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dialog_ok">OK</string>
+
+    <string name="app_name">Porta Payment</string>
+	<string name="done">Done</string>
+	<string name="show_qr">Show Code</string>
+	<string name="read_qr">Start Scanner</string>
+	<string name="other_options">Other options</string>
+
+	<string name="no_paypalid_dialog_title">Missing Username</string>
+	<string name="no_paypalid_dialog_message">Please provide your PayPal username.</string>
+
+	<string name="request_payment">Create Payment Request</string>
+	<string name="scan_request">Scan a payment request</string>
+	<string name="preferences">Settings</string>
+
+	<string name="msg_default_contents">Contents</string>
+	<string name="msg_default_format">Format</string>
+    <string name="msg_default_type">Type</string>
+	<string name="msg_default_status">Place a barcode inside the viewfinder rectangle to scan it.</string>
+
+	<string name="preferences_scanning_title">Scanning Preferences</string>
+    <string name="preferences_play_beep_title">Beep</string>
+	<string name="preferences_vibrate_title">Vibrate</string>
+	
+	<string name="preferences_paypal_title">PayPal Details</string>
+	
+	<string name="preferences_paypal_username_title">PayPal Username</string>
+	<string name="preferences_paypal_username_summary">This the email address you log in to PayPal with.</string>
+</resources>
