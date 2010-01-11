@@ -2,7 +2,7 @@
 <resources>
     <string name="dialog_ok">OK</string>
 
-    <string name="app_name">Porta Payment</string>
+    <string name="app_name">Porta Payments</string>
 	<string name="done">Done</string>
 	<string name="show_qr">Show Code</string>
 	<string name="read_qr">Start Scanner</string>
