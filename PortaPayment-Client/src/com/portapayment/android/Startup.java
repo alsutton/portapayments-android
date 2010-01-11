@@ -5,12 +5,12 @@ import com.google.zxing.client.android.Intents;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -24,6 +24,12 @@ public class Startup extends Activity {
 
 	private static final int SCAN_PAYMENT_CODE = 0;
 	
+	/**
+	 * The currency button.
+	 */
+	
+	private Button currencyButton;
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,6 +40,11 @@ public class Startup extends Activity {
         ((Button)findViewById(R.id.show_qr_button)).setOnClickListener(
         		new OnClickListener() {
 					public void onClick(View v) {
+				    	final String recipient = getPayPalUsername();
+				        if(recipient == null) {
+				        	return;
+				        }
+
 						generateCode();
 					}
         		}
@@ -42,6 +53,11 @@ public class Startup extends Activity {
         ((Button)findViewById(R.id.read_qr_button)).setOnClickListener(
         		new OnClickListener() {
 					public void onClick(View v) {
+				    	final String recipient = getPayPalUsername();
+				        if(recipient == null) {
+				        	return;
+				        }
+
 						Intent startIntent = new Intent(Startup.this, CaptureActivity.class);
 						startIntent.setAction(Intents.Scan.ACTION);
 						startIntent.putExtra(Intents.Scan.MODE, Intents.Scan.QR_CODE_MODE);
@@ -59,17 +75,39 @@ public class Startup extends Activity {
         		}
         	);
         
+        ((Button)findViewById(R.id.preferences_button)).setOnClickListener(
+        		new OnClickListener() {
+					public void onClick(View v) {
+						Intent startIntent = new Intent(Startup.this, Preferences.class);
+						Startup.this.startActivity(startIntent);
+					}
+        		}
+        	);
+
         EditText amountBox = (EditText)findViewById(R.id.amount);
         amountBox.requestFocus();
         amountBox.setSelection(0, amountBox.getText().length());
-        
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String paypalUsername = prefs.getString(Preferences.PAYPAL_USERNAME, "");
-        if(paypalUsername == null || paypalUsername.length() == 0) {
-        	handleNoPayPalUsername();
-        }
+
+        currencyButton = (Button)findViewById(R.id.currency);
+        currencyButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				selectCurrency();
+			}        	
+        });
+        getPayPalUsername();
     }
 
+    /**
+     * Set the layout on a resume.
+     */
+    
+    @Override
+    public void onResume() {
+    	super.onResume();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        currencyButton.setText(prefs.getString(Preferences.DEFAULT_CURRENCY, "USD"));
+    }
+    
     /**
      * Handles the response from the scanner.
      */
@@ -78,7 +116,9 @@ public class Startup extends Activity {
             Intent data) {
         if (requestCode == SCAN_PAYMENT_CODE) {
             if (resultCode == RESULT_OK) {
-            	Log.e("PORTAPAY", "Got : "+data.getStringExtra(Intents.Scan.RESULT));
+            	Intent startIntent = new Intent(this, ProcessPayment.class);
+            	startIntent.putExtra(ProcessPayment.PAYMENT_DATA_EXTRA, data.getStringExtra(Intents.Scan.RESULT));
+            	startActivity(startIntent);
             }
         }
     }
@@ -88,12 +128,24 @@ public class Startup extends Activity {
      */
     
     private void generateCode() {
+    	final String recipient = getPayPalUsername();
+        if(recipient == null) {
+        	return;
+        }
+        
     	String amount = ((EditText) findViewById(R.id.amount)).getText().toString();
-    	String currency = "USD";
-    	String recipient = "al@foo.bar";
+    	String currency = currencyButton.getText().toString();
     	
     	StringBuilder data = new StringBuilder(amount.length()+currency.length()+recipient.length()+2);
-    	data.append(amount);
+    	int dotIdx = amount.indexOf('.');
+    	if(dotIdx == -1) {
+    		data.append(amount);
+    		data.append("_00");
+    	} else {
+    		data.append(amount.subSequence(0, dotIdx));
+    		data.append('_');
+    		data.append(amount.subSequence(dotIdx+1, amount.length()));
+    	}
     	data.append('_');
     	data.append(currency);
     	data.append('_');
@@ -108,18 +160,56 @@ public class Startup extends Activity {
      * Handle the case where no PayPal username has been entered.
      */
     
-    private void handleNoPayPalUsername() {
-    	new AlertDialog.Builder(this).
-    		setTitle(R.string.no_paypalid_dialog_title).
-    		setIcon(android.R.drawable.ic_dialog_alert).
-    		setMessage(R.string.no_paypalid_dialog_message).
-    		setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {				
-				public void onClick(DialogInterface dialog, int which) {
-					Intent startIntent = new Intent(Startup.this, Preferences.class);
-					Startup.this.startActivity(startIntent);
-    			}
-    		}).
-    		show();
-    	
+    private String getPayPalUsername() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String paypalUsername = prefs.getString(Preferences.PAYPAL_USERNAME, "");
+        if(paypalUsername == null || paypalUsername.length() == 0) {
+	    	new AlertDialog.Builder(this).
+	    		setTitle(R.string.no_paypalid_dialog_title).
+	    		setIcon(android.R.drawable.ic_dialog_alert).
+	    		setMessage(R.string.no_paypalid_dialog_message).
+	    		setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {				
+					public void onClick(DialogInterface dialog, int which) {
+						Intent startIntent = new Intent(Startup.this, Preferences.class);
+						Startup.this.startActivity(startIntent);
+	    			}
+	    		}).
+	    		show();
+	    	
+	    	return null;
+        }
+        return paypalUsername;
     }
- }
+    
+    
+    protected void selectCurrency() {
+    	Builder builder = new AlertDialog.Builder(this);
+    	
+        String[] currencyValues = this.getResources().getStringArray(R.array.preferences_default_currency_values);
+        
+        String currentCurrency = currencyButton.getText().toString();
+        int idx;
+        for(idx = 0; idx < currencyValues.length; idx++) {
+        	if(currentCurrency.equals(currencyValues[idx])) {
+        		break;
+        	}
+        }
+        if(idx == currencyValues.length) {
+        	idx --;
+        }
+        
+        builder.setItems(
+        		R.array.preferences_default_currency_entries, 
+        		new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+				        String[] currencyValues = 
+				        	Startup.this.getResources().getStringArray(R.array.preferences_default_currency_values);
+						currencyButton.setText(currencyValues[which]);
+						dialog.dismiss();
+					}
+				});
+				
+		builder.setPositiveButton(null, null);
+        builder.show();
+    }
+}

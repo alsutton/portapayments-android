@@ -15,6 +15,12 @@ public final class Preferences extends PreferenceActivity implements
 	
 	public static final String PAYPAL_USERNAME = "preferences_paypal_username";
 	
+	/**
+	 * The key for the default currency 
+	 */
+	
+	public static final String DEFAULT_CURRENCY = "preferences_default_currency";
+	
 	@Override
 	protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);

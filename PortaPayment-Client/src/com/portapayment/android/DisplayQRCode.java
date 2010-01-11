@@ -8,13 +8,11 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
 import android.widget.ImageView;
-
 
 public class DisplayQRCode extends Activity {
 	
@@ -117,7 +115,6 @@ public class DisplayQRCode extends Activity {
     	
     	public void run () {
     		try {
-    			Log.e("Portapay", text);
 	            ByteMatrix result = new QRCodeWriter().encode
 	            		(text, BarcodeFormat.QR_CODE, DisplayQRCode.this.size,  DisplayQRCode.this.size);
 	            int width = result.getWidth();

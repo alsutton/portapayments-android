@@ -1,0 +1,50 @@
+<resources>
+	<string-array name="preferences_default_currency_entries">
+		<item>Australian Dollar</item>
+		<item>Canadian Dollar</item>
+		<item>Czech Koruna</item>
+		<item>Danish Krone</item>
+		<item>Euro</item>
+		<item>Hong Kong Dollar</item>
+		<item>Hungarian Forint</item>
+		<item>Israeli New Sheqel</item>
+		<item>Japanese Yen</item>
+		<item>Mexican Peso</item>
+		<item>Norwegian Krone</item>
+		<item>New Zealand Dollar</item>
+		<item>Philippine Peso</item>
+		<item>Polish Zloty</item>
+		<item>Pound Sterling</item>
+		<item>Singapore Dollar</item>
+		<item>Swedish Krona</item>
+		<item>Swiss Franc</item>
+		<item>Taiwan New Dollar</item>
+		<item>Thai Baht</item>
+		<item>U.S. Dollar</item>
+	</string-array>
+	<string-array name="preferences_default_currency_values">
+		<item>AUD</item>
+		<item>CAD</item>
+		<item>CZK</item>
+		<item>DKK</item>
+		<item>EUR</item>
+		<item>HKD</item>
+		<item>HUF</item>
+		<item>ILS</item>
+		<item>JPY</item>
+		<item>MXN</item>
+		<item>NOK</item>
+		<item>NZD</item>
+		<item>PHP</item>
+		<item>PLN</item>
+		<item>GBP</item>
+		<item>SGD</item>
+		<item>SEK</item>
+		<item>CHF</item>
+		<item>TWD</item>
+		<item>THB</item>
+		<item>USD</item>
+	</string-array>
+</resources>
+
+

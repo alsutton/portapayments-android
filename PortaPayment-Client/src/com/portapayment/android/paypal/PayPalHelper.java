@@ -2,7 +2,6 @@ package com.portapayment.android.paypal;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +17,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.util.Log;
+
 public class PayPalHelper {
 
 	/**
@@ -25,6 +26,16 @@ public class PayPalHelper {
 	 */
 	
 	private static final String PAYPAL_URL = "https://svcs.sandbox.paypal.com/AdaptivePayments/Pay";
+
+	/**
+	 * Status returned by PayPal if the payment completed first time.
+	 */
+	private static final String COMPLETED_STATUS = "COMPLETED";
+
+	/**
+	 * Status returned if the payment was created and requires redirection.
+	 */
+	private static final Object CREATED_STATUS = "CREATED";
 	
 	/**
 	 * Method to make a payment between a sender and receiver
@@ -34,7 +45,7 @@ public class PayPalHelper {
 	 */
 	
 	
-	public static void makePayment(final String sender, final String recipient, final String currency,
+	public static String startPayment(final String sender, final String recipient, final String currency,
 			final String amount ) throws ClientProtocolException, IOException {
 		
 		HttpPost message = createRequest();
@@ -46,10 +57,13 @@ public class PayPalHelper {
         nameValuePairs.add(new BasicNameValuePair("receiverList.receiver(0).amount", amount));
         nameValuePairs.add(new BasicNameValuePair("currencyCode", currency));
         nameValuePairs.add(new BasicNameValuePair("feesPayer", "EACHRECEIVER"));
+        nameValuePairs.add(new BasicNameValuePair("returnUrl", "http://portapayments.com/pp/PayOK.jsp"));
+        nameValuePairs.add(new BasicNameValuePair("cancelUrl", "http://portapayments.com/pp/PayCancel.jsp"));
+        
         nameValuePairs.add(new BasicNameValuePair("memo", "Paid using PortaPayments."));
         message.setEntity(new UrlEncodedFormEntity(nameValuePairs));
         
-        HttpClient client = new DefaultHttpClient();
+        final HttpClient client = new DefaultHttpClient();
         HttpResponse response = client.execute(message);
         int statusCode = response.getStatusLine().getStatusCode();
         if(statusCode != HttpStatus.SC_OK) {
@@ -57,11 +71,20 @@ public class PayPalHelper {
         }
      
         Map<String,String> results = getResults(response);
-        String payKey = results.get("payKey");
-        if(payKey == null) {
-        	throw new IOException("No PayKey provided by PayPal.");
+        
+        final String status = results.get("paymentExecStatus");
+        if( COMPLETED_STATUS.equals(status)) {
+        	return null;
+        }
+        if( !CREATED_STATUS.equals(status)) {
+        	throw new PayPalException("Unknown payment status : "+status);
         }
         
+        final String payKey = results.get("payKey");
+        if(payKey == null) {
+        	throw new PayPalException("No PayKey provided by PayPal.");
+        }        
+        return payKey;
 	}
 	
 	/**
@@ -85,6 +108,7 @@ public class PayPalHelper {
         			builder.delete(0, builder.length());
         		} else if (c == '&') {
         			results.put(key, builder.toString());
+        			Log.e("PP", key + "="+ builder.toString());
         			builder.delete(0, builder.length());
         		} else {
         			builder.append(c);
@@ -109,5 +133,20 @@ public class PayPalHelper {
 		message.setHeader("X-PAYPAL-RESPONSE-DATA-FORMAT", "NV");  
 		message.setHeader("X-PAYPAL-APPLICATION-ID", "APP-80W284485P519543T");
 		return message;
+	}
+	
+	/**
+	 * Exception thrown if something is goes wrong in the app/PayPal communication
+	 */
+	
+	public static class PayPalException extends RuntimeException {
+		/**
+		 * Generated serial ID
+		 */
+		private static final long serialVersionUID = -1416134527103317337L;
+
+		PayPalException(final String message) {
+			super(message);
+		}
 	}
 }

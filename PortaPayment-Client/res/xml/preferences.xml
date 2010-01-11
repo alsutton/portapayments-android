@@ -20,6 +20,13 @@
         android:key="preferences_paypal_username"
         android:title="@string/preferences_paypal_username_title"
         android:summary="@string/preferences_paypal_username_summary"/>
+    <ListPreference
+        android:key="preferences_default_currency"
+        android:title="@string/preferences_default_currency_title"
+        android:summary="@string/preferences_default_currency_summary"
+        android:entries="@array/preferences_default_currency_entries"
+        android:entryValues="@array/preferences_default_currency_values"
+        android:dialogTitle="@string/preferences_default_currency_title"/>
   </PreferenceCategory>
   <PreferenceCategory android:title="@string/preferences_scanning_title">
     <CheckBoxPreference

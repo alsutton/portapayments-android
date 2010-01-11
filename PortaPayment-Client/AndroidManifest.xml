@@ -14,6 +14,7 @@
 
     	<activity	android:name="DisplayQRCode" />
     	<activity	android:name="Preferences" />
+    	<activity	android:name="ProcessPayment" />
     	<activity	android:name="com.google.zxing.client.android.CaptureActivity" 
     	    		android:screenOrientation="landscape"
               		android:configChanges="orientation|keyboardHidden"
