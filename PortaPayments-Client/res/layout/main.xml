@@ -29,8 +29,7 @@
 				    		android:layout_width="wrap_content" 
 				    		android:layout_height="wrap_content" 
 				    		android:layout_toRightOf="@id/amount"
-				    		android:layout_alignTop="@id/amount"
-				    		android:text="USD"/>
+				    		android:layout_alignTop="@id/amount"/>
 			</TableRow>
 		</TableLayout>
 		<Button		android:id="@+id/show_qr_button"

@@ -3,14 +3,20 @@ package com.portapayment.android;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnClickListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.webkit.WebView;
+import android.view.Window;
 
 import com.portapayment.android.paypal.PayPalHelper;
+import com.portapayment.android.paypal.PayPalHelper.PayPalException;
 
 
 public class ProcessPayment extends Activity {
@@ -25,7 +31,7 @@ public class ProcessPayment extends Activity {
 	 * The URL stub for passing the payment authentication to PayPal
 	 */
 
-	private final static String PAY_URL_STUB = "https://www.paypal.com/webscr?vmd=_ap-payment&paykey=";
+	private final static String PAY_URL_STUB = "https://www.sandbox.paypal.com/webscr?cmd=_ap-payment&paykey=";
 	private final static int PAY_URL_STUB_LENGTH = PAY_URL_STUB.length();
 	
 	/**
@@ -40,18 +46,11 @@ public class ProcessPayment extends Activity {
 	
 	private final Handler handler = new Handler();
 	
-	/**
-	 * The WebView on display
-	 */
-	
-	private WebView webView;
-	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.processing_payment);
-        webView = (WebView) findViewById(R.id.webview);
-        webView.getSettings().setJavaScriptEnabled(true);
     }
 
     @Override
@@ -72,7 +71,7 @@ public class ProcessPayment extends Activity {
      */
 
     public void raiseError(final int errorMessageId) {
-    	
+    	handler.post(new MyErrorPoster(errorMessageId));
     }
     
     /**
@@ -98,25 +97,16 @@ public class ProcessPayment extends Activity {
     			raiseError(R.string.error_bad_format);
     		}
     		
-    		int thirdUnderscore = qrData.indexOf('_', secondUnderscore+1);
-    		if(thirdUnderscore == -1) {
-    			raiseError(R.string.error_bad_format);
-    		}
+    		final String amount =  qrData.substring(0, firstUnderscore);
+    		String currency = qrData.substring(firstUnderscore+1, secondUnderscore);
+    		String recipient = qrData.substring(secondUnderscore+1);
     		
-    		StringBuilder amountBuilder = new StringBuilder(secondUnderscore);
-    		amountBuilder.append(qrData.substring(0,firstUnderscore));
-    		amountBuilder.append('.');
-    		amountBuilder.append(qrData.substring(firstUnderscore+1,secondUnderscore));
-    		final String amount = amountBuilder.toString();
-    		String currency = qrData.substring(secondUnderscore+1, thirdUnderscore);
-    		String recipient = qrData.substring(thirdUnderscore+1);
-    		
-    		Log.e("PP", amount+":"+currency+":"+recipient);
-/*            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ProcessPayment.this);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ProcessPayment.this);
             String sender = prefs.getString(Preferences.PAYPAL_USERNAME, "");
     		
 			try {
-				final String payKey = PayPalHelper.startPayment(sender, recipient, currency, amount);
+				final String payKey = PayPalHelper.startPayment(ProcessPayment.this, 
+						sender, recipient, currency, amount);
 	    		if(payKey == null) {
 	    			handler.post(new MyHTMLRedirectHandler(ProcessPayment.PAYMENT_OK_URL));
 	    			return;
@@ -125,13 +115,18 @@ public class ProcessPayment extends Activity {
 	    		final StringBuilder paypalAuthURLBuilder = new StringBuilder(PAY_URL_STUB_LENGTH+payKey.length());
 	    		paypalAuthURLBuilder.append(PAY_URL_STUB);
 	    		paypalAuthURLBuilder.append(payKey);
+	    		paypalAuthURLBuilder.append("&login_email=");
+	    		paypalAuthURLBuilder.append(sender);
 	    		
 				handler.post(new MyHTMLRedirectHandler(paypalAuthURLBuilder.toString()));
+			} catch (PayPalException ppe) {
+				Log.e("PortaPayments", "Error returned by PayPal", ppe);
+				raiseError(R.string.error_paypal_process);
 			} catch (IOException e) {
 				Log.e("PortaPayments", "Error talking to PayPal.", e );
 				raiseError(R.string.error_io);
 			}
-*/    	}
+    	}
     }
     
     /**
@@ -146,7 +141,34 @@ public class ProcessPayment extends Activity {
     	}
     	
     	public void run() {
-    		webView.loadUrl(url);
+    		Intent webIntent = new Intent(Intent.ACTION_VIEW);
+    		webIntent.setData(Uri.parse(url));
+    		ProcessPayment.this.startActivity(webIntent);
+    		ProcessPayment.this.finish();
+    	}
+    }
+    
+    /**
+     * Runnable to hand to the handler to handle the bouncing to the web page (handle handle handle :)).
+     */
+    
+    private class MyErrorPoster implements Runnable {
+    	private int errorMessageId;
+    	
+    	MyErrorPoster(final int errorMessageId) {
+    		this.errorMessageId = errorMessageId;
+    	}
+    	
+    	public void run() {
+        	new AlertDialog.Builder(ProcessPayment.this)
+    		.setIcon(android.R.drawable.ic_dialog_alert)
+    		.setTitle(R.string.dlg_error_title)
+    		.setMessage(errorMessageId)
+    		.setPositiveButton(R.string.dialog_ok, new OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					ProcessPayment.this.finish();
+				}
+    		}).show();
     	}
     }
 }

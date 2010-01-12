@@ -17,7 +17,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class Startup extends Activity {
+public final class Startup extends Activity {
 	/**
 	 * The request code for scanning a payment
 	 */
@@ -94,20 +94,15 @@ public class Startup extends Activity {
 				selectCurrency();
 			}        	
         });
+
+        if(currencyButton.getText() == null || currencyButton.getText().length() == 0) {
+	        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+	        currencyButton.setText(prefs.getString(Preferences.DEFAULT_CURRENCY, "USD"));
+        }
+        
         getPayPalUsername();
     }
 
-    /**
-     * Set the layout on a resume.
-     */
-    
-    @Override
-    public void onResume() {
-    	super.onResume();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        currencyButton.setText(prefs.getString(Preferences.DEFAULT_CURRENCY, "USD"));
-    }
-    
     /**
      * Handles the response from the scanner.
      */
@@ -133,19 +128,11 @@ public class Startup extends Activity {
         	return;
         }
         
-    	String amount = ((EditText) findViewById(R.id.amount)).getText().toString();
-    	String currency = currencyButton.getText().toString();
+        final String amount = ((EditText) findViewById(R.id.amount)).getText().toString();
+    	final String currency = currencyButton.getText().toString();
     	
-    	StringBuilder data = new StringBuilder(amount.length()+currency.length()+recipient.length()+2);
-    	int dotIdx = amount.indexOf('.');
-    	if(dotIdx == -1) {
-    		data.append(amount);
-    		data.append("_00");
-    	} else {
-    		data.append(amount.subSequence(0, dotIdx));
-    		data.append('_');
-    		data.append(amount.subSequence(dotIdx+1, amount.length()));
-    	}
+    	final StringBuilder data = new StringBuilder(amount.length()+currency.length()+recipient.length()+2);
+		data.append(amount);
     	data.append('_');
     	data.append(currency);
     	data.append('_');

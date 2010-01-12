@@ -8,8 +8,11 @@
 	<string name="read_qr">Start Scanner</string>
 	<string name="other_options">Other options</string>
 
+	<string name="processing_message">The payment is being prepared...</string>
+	<string name="dlg_error_title">An Error Occurred</string>
 	<string name="error_bad_format">The scanned code could not be understood.</string>
-	<string name="error_io">An error occurred when talking to PayPal</string>
+	<string name="error_io">An error occurred when talking to PayPal.</string>
+	<string name="error_paypal_process">PayPal refused to process the transfer.</string>
 	
 	<string name="no_paypalid_dialog_title">Missing Email Address</string>
 	<string name="no_paypalid_dialog_message">Please enter the email address you use for PayPal.</string>
@@ -18,6 +21,7 @@
 	<string name="scan_request">Scan a payment request</string>
 	<string name="preferences">Settings</string>
 
+  	<string name="msg_camera_framework_bug">Sorry, the Android camera encountered a problem. You may need to restart the device.</string>
 	<string name="msg_default_contents">Contents</string>
 	<string name="msg_default_format">Format</string>
     <string name="msg_default_type">Type</string>
