@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.net.Uri;
 import android.os.Bundle;
@@ -119,12 +120,15 @@ public class ProcessPayment extends Activity {
 	    		paypalAuthURLBuilder.append(sender);
 	    		
 				handler.post(new MyHTMLRedirectHandler(paypalAuthURLBuilder.toString()));
-			} catch (PayPalException ppe) {
-				Log.e("PortaPayments", "Error returned by PayPal", ppe);
+			} catch (PayPalException e) {
+				Log.e("PortaPayments", "Error returned by PayPal", e);
 				raiseError(R.string.error_paypal_process);
 			} catch (IOException e) {
 				Log.e("PortaPayments", "Error talking to PayPal.", e );
 				raiseError(R.string.error_io);
+			} catch (Exception e) {
+				Log.e("PortaPayments", "Non-specific error", e);
+				raiseError(R.string.error_general);
 			}
     	}
     }
@@ -168,7 +172,13 @@ public class ProcessPayment extends Activity {
 				public void onClick(DialogInterface dialog, int which) {
 					ProcessPayment.this.finish();
 				}
-    		}).show();
+    		})
+    		.setOnCancelListener(new OnCancelListener() {
+				public void onCancel(DialogInterface dialog) {
+					ProcessPayment.this.finish();					
+				}    			
+    		})
+    		.show();
     	}
     }
 }
