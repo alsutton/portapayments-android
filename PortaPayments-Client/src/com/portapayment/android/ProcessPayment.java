@@ -5,16 +5,19 @@ import java.io.IOException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
+import android.webkit.JsResult;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.portapayment.android.paypal.PayPalHelper;
 import com.portapayment.android.paypal.PayPalHelper.PayPalException;
@@ -41,7 +44,13 @@ public class ProcessPayment extends Activity {
 	
 	public static final String PAYMENT_DATA_EXTRA = "QR_DATA";
 	
-	 /**
+	/**
+	 * The WebView used to communicate with PayPal
+	 */
+	
+	private WebView webView;
+	
+	/**
 	 * The handler used to populate the encoded image area
 	 */
 	
@@ -50,8 +59,33 @@ public class ProcessPayment extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        super.requestWindowFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.processing_payment);
+        webView = (WebView) findViewById(R.id.webview);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setSupportZoom(false);
+        webView.getSettings().setSaveFormData(false);
+        webView.getSettings().setSavePassword(false);
+        webView.setWebViewClient(new WebViewClient() {
+        	@Override
+        	public void onPageFinished(final WebView view, final String url) {
+        		ProcessPayment.this.findViewById(R.id.webview_wait_message).setVisibility(View.GONE);
+        		view.setVisibility(View.VISIBLE);
+        	}
+        });
+        webView.setWebChromeClient(new WebChromeClient() {
+        	@Override
+        	public void onProgressChanged(final WebView view, final int progress) {
+        		ProcessPayment.this.setProgress(progress*1000);
+        	}
+            @Override         
+            public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+            	Log.d("PortaPayments", message);
+            	result.confirm();
+            	return true;         
+            }
+        });
+        webView.addJavascriptInterface(new PortaPaymentsJavascriptInterface(), "PortaPayments");
     }
 
     @Override
@@ -145,10 +179,7 @@ public class ProcessPayment extends Activity {
     	}
     	
     	public void run() {
-    		Intent webIntent = new Intent(Intent.ACTION_VIEW);
-    		webIntent.setData(Uri.parse(url));
-    		ProcessPayment.this.startActivity(webIntent);
-    		ProcessPayment.this.finish();
+    		webView.loadUrl(url);
     	}
     }
     
@@ -179,6 +210,28 @@ public class ProcessPayment extends Activity {
 				}    			
     		})
     		.show();
+    	}
+    }
+    
+    /**
+     * Javascript interface allowing the web page to finish this activity
+     */
+    
+    final class PortaPaymentsJavascriptInterface {
+    	PortaPaymentsJavascriptInterface() {
+    		super();
+    	}
+    	
+    	/**
+    	 * End this activity
+    	 */
+    	
+    	public void finish() {
+    		handler.post(new Runnable() {
+				public void run() {
+					ProcessPayment.this.finish();
+				}
+    		});
     	}
     }
 }

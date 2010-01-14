@@ -4,11 +4,16 @@
 	android:layout_height="fill_parent" android:background="#fff"
 	android:gravity="center">
 
-	<TextView		android:layout_width="wrap_content"
+	<TextView		android:id="@+id/webview_wait_message"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_gravity="center"
 					android:text="@string/processing_message"
 					android:color="#000"
 					android:textColor="#000"/>
 
+	<WebView		android:id="@+id/webview"
+					android:visibility="gone"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"/>
 </LinearLayout>
