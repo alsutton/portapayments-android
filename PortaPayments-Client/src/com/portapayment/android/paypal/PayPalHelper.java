@@ -83,10 +83,13 @@ public final class PayPalHelper {
 		requestBody.append("&clientDetails.applicationId=PortaPayments");
         
         Map<String,String> results = postData(headers, requestBody.toString());
+        if(results == null) {
+        	throw new PayPalException("PayPal was unable to start the transaction.");
+        }
         
         final String ack = results.get("responseEnvelope.ack");
         if(ack != null && "Failure".equals(ack)) {
-        	throw new PayPalException("PayPal generated an error "+results.get("error(0).errorId"));
+        	throw new PayPalExceptionWithErrorCode("PayPal generated an error ", results.get("error(0).errorId"));
         }
         
         return results.get("payKey");
@@ -110,7 +113,7 @@ public final class PayPalHelper {
 			os.close();
 			int status = connection.getResponseCode();
 			if (status != 200) {
-				System.out.println("HTTP Error code " + status
+				Log.e("PortaPayments", "HTTP Error code " + status
 						+ " received, transaction not submitted");
 				reader = new BufferedReader(new InputStreamReader(connection
 						.getErrorStream()));
@@ -194,6 +197,7 @@ public final class PayPalHelper {
 	 */
 	
 	public static class PayPalException extends RuntimeException {
+		//569057 - Recipient invalid
 		/**
 		 * Generated serial ID
 		 */
@@ -201,6 +205,23 @@ public final class PayPalHelper {
 
 		PayPalException(final String message) {
 			super(message);
+		}
+	}
+	
+	/**
+	 * Exception thrown if PayPal reports an error that contains an error code
+	 */
+	
+	public static final class PayPalExceptionWithErrorCode extends PayPalException {
+		private String errorCode;
+		
+		PayPalExceptionWithErrorCode(final String message, final String errorCode) {
+			super(message);
+			this.errorCode = errorCode;
+		}
+
+		public String getErrorCode() {
+			return errorCode;
 		}
 	}
 }
