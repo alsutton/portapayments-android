@@ -5,13 +5,17 @@ import com.google.zxing.common.ByteMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnClickListener;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.view.Window;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -86,10 +90,11 @@ public class DisplayQRCode extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.show_qr_code);
         
         ((Button)findViewById(R.id.done_button)).setOnClickListener(
-        		new OnClickListener() {
+        		new View.OnClickListener() {
 					public void onClick(View v) {
 						finish();
 					}
@@ -110,6 +115,14 @@ public class DisplayQRCode extends Activity {
     		getViewTreeObserver().
     		addOnGlobalLayoutListener(layoutListener);
         firstLayout = true;
+    }
+    
+    /**
+     * Raise an error.
+     */
+
+    public void raiseError(final int errorMessageId) {
+    	handler.post(new MyErrorPoster(errorMessageId));
     }
 
     /**
@@ -155,6 +168,7 @@ public class DisplayQRCode extends Activity {
 	            handler.post(new MyImageViewPopulator(imageView, bitmap));
     		} catch(Exception ex) {
     			Log.e("PortaPayments", "Error during code generation.", ex);
+    			raiseError(R.string.error_codegen);
     		}
     	}
     	
@@ -173,5 +187,34 @@ public class DisplayQRCode extends Activity {
 			imageView.setImageBitmap(bitmap);
 		}
 	}
+        
+    /**
+     * Runnable to hand to the handler to handle the bouncing to the web page (handle handle handle :)).
+     */
     
+    private class MyErrorPoster implements Runnable {
+    	private int errorMessageId;
+    	
+    	MyErrorPoster(final int errorMessageId) {
+    		this.errorMessageId = errorMessageId;
+    	}
+    	
+    	public void run() {
+        	new AlertDialog.Builder(DisplayQRCode.this)
+    		.setIcon(android.R.drawable.ic_dialog_alert)
+    		.setTitle(R.string.dlg_error_title)
+    		.setMessage(errorMessageId)
+    		.setPositiveButton(R.string.dialog_ok, new OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					DisplayQRCode.this.finish();
+				}
+    		})
+    		.setOnCancelListener(new OnCancelListener() {
+				public void onCancel(DialogInterface dialog) {
+					DisplayQRCode.this.finish();					
+				}    			
+    		})
+    		.show();
+    	}
+    }
 }
