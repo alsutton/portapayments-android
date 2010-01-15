@@ -1,8 +1,5 @@
 package com.portapayment.android;
 
-import com.google.zxing.client.android.CaptureActivity;
-import com.google.zxing.client.android.Intents;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -16,6 +13,9 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.google.zxing.client.android.CaptureActivity;
+import com.google.zxing.client.android.Intents;
 
 public final class Startup extends Activity {
 	/**
@@ -131,16 +131,15 @@ public final class Startup extends Activity {
         final String amount = ((EditText) findViewById(R.id.amount)).getText().toString();
     	final String currency = currencyButton.getText().toString();
     	
-    	final StringBuilder data = new StringBuilder(amount.length()+currency.length()+recipient.length()+2);
-		data.append(amount);
-    	data.append('_');
-    	data.append(currency);
-    	data.append('_');
-    	data.append(recipient);
-    	
-		Intent startIntent = new Intent(Startup.this, DisplayQRCode.class);
-		startIntent.putExtra(DisplayQRCode.ENCODE_DATA_EXTRA, data.toString());
-		Startup.this.startActivity(startIntent);    	
+		try {
+			Intent startIntent = new Intent(Startup.this, DisplayQRCode.class);
+			startIntent.putExtra(DisplayQRCode.RECIPIENT, recipient);
+			startIntent.putExtra(DisplayQRCode.AMOUNT, amount);
+			startIntent.putExtra(DisplayQRCode.CURRENCY, currency);
+			Startup.this.startActivity(startIntent);    	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     }
     
     /**
