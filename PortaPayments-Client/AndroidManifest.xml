@@ -12,7 +12,12 @@
             </intent-filter>
         </activity>
 
-    	<activity	android:name="DisplayQRCode" />
+    	<activity	android:name="DisplayQRCode">
+            <intent-filter>
+                <action android:name="com.portapayments.action.CREATE_CODE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+    	</activity>
     	<activity	android:name="Preferences" />
     	<activity	android:name="ProcessPayment" />
     	<activity	android:name="com.google.zxing.client.android.CaptureActivity" 
