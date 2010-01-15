@@ -25,7 +25,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 import com.google.zxing.ResultPoint;
-import com.portapayment.android.R;
+import com.portapayments.android.R;
 
 import java.util.Collection;
 import java.util.HashSet;

@@ -1,4 +1,4 @@
-package com.portapayment.android;
+package com.portapayments.android;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;

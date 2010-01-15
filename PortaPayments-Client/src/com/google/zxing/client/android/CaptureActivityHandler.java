@@ -17,7 +17,7 @@
 package com.google.zxing.client.android;
 
 import com.google.zxing.Result;
-import com.portapayment.android.R;
+import com.portapayments.android.R;
 
 import android.app.Activity;
 import android.content.Intent;

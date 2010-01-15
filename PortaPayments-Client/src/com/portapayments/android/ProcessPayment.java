@@ -1,4 +1,4 @@
-package com.portapayment.android;
+package com.portapayments.android;
 
 import java.io.IOException;
 
@@ -20,9 +20,9 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.portapayment.android.paypal.PayPalHelper;
-import com.portapayment.android.paypal.PayPalHelper.PayPalException;
-import com.portapayment.android.paypal.PayPalHelper.PayPalExceptionWithErrorCode;
+import com.portapayments.android.paypal.PayPalHelper;
+import com.portapayments.android.paypal.PayPalHelper.PayPalException;
+import com.portapayments.android.paypal.PayPalHelper.PayPalExceptionWithErrorCode;
 
 public class ProcessPayment extends Activity {
 	

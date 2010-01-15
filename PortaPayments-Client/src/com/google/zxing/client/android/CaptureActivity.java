@@ -54,7 +54,7 @@ import com.google.zxing.Result;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.client.android.result.ResultHandler;
 import com.google.zxing.client.android.result.ResultHandlerFactory;
-import com.portapayment.android.R;
+import com.portapayments.android.R;
 
 /**
  * The barcode reader activity itself. This is loosely based on the CameraPreview

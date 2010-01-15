@@ -1,4 +1,4 @@
-package com.portapayment.android;
+package com.portapayments.android;
 
 import android.app.Activity;
 import android.app.AlertDialog;

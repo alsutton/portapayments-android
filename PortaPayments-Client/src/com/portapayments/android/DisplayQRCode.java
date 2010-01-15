@@ -1,4 +1,4 @@
-package com.portapayment.android;
+package com.portapayments.android;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.ByteMatrix;

@@ -16,7 +16,7 @@
 
 package com.google.zxing.client.android;
 
-import com.portapayment.android.R;
+import com.portapayments.android.R;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
