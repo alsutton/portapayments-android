@@ -10,6 +10,15 @@
 	    			
 		<TextView	android:layout_width="fill_parent" 
 		    		android:layout_height="wrap_content" 
+		    		android:text="PortaPayments"
+		    		android:gravity="center"
+		    		android:background="#003366"
+		    		android:textSize="12pt"
+		    		android:textColor="#FFFFFF"
+		    		android:layout_marginBottom="5dip"/>
+
+		<TextView	android:layout_width="fill_parent" 
+		    		android:layout_height="wrap_content" 
 		    		android:text="@string/request_payment"
 		    		android:gravity="center"
 		    		android:layout_marginTop="10dip"
@@ -50,20 +59,5 @@
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:text="@string/read_qr"/>
-		<TextView  
-		    android:layout_width="fill_parent" 
-		    android:layout_height="wrap_content" 
-		    android:text="@string/other_options"
-		    android:layout_marginTop="10dip"
-		    android:layout_marginBottom="5dip"
-		    android:gravity="center"
-		    style="?android:attr/listSeparatorTextViewStyle"
-		    />
-		<Button
-			android:id="@+id/preferences_button"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_alignParentBottom="true"
-			android:text="@string/preferences"/>
 	</LinearLayout>
 </ScrollView>
