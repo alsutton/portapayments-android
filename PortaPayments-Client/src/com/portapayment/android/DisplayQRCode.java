@@ -3,11 +3,14 @@ package com.portapayment.android;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.ByteMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.portapayment.android.utils.DataEncoder;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -17,16 +20,30 @@ import android.widget.ImageView;
 public class DisplayQRCode extends Activity {
 	
 	/**
-	 * The intent extra holding the text to encode.
+	 * The intent extra parameters.
 	 */
 	
-	public static final String ENCODE_DATA_EXTRA = "QR_DATA";
+	public static final String RECIPIENT = "recipient",
+								AMOUNT = "amount",
+								CURRENCY = "currency";
 	
 	/**
-	 * The current text on display as a QR Code.
+	 * The recipient from the code
 	 */
 	
-	private String currentQRCodeText = null;
+	private String recipient;
+	
+	/**
+	 * The amount for the code
+	 */
+	
+	private String amount;
+	
+	/**
+	 * The currency for the code.
+	 */
+	
+	private String currency;
 	
 	/**
 	 * Flag to determine the first pass of the layout engine which allows
@@ -54,7 +71,7 @@ public class DisplayQRCode extends Activity {
 	        size = smallerDimension * 7 / 8;
 	       
     		ImageView codeView = (ImageView) findViewById(R.id.qr_code);
-    		new Thread(new MyEncodingThread(codeView, currentQRCodeText)).start();
+    		new Thread(new MyEncodingThread(codeView)).start();
     		
 	        firstLayout = false;
 	      }
@@ -85,18 +102,15 @@ public class DisplayQRCode extends Activity {
     public void onResume() {
     	super.onResume();
     	
-    	String codeText = getIntent().getStringExtra(ENCODE_DATA_EXTRA);
-    	if( codeText == null ) {
-    		finish();
-    		return;
-    	}
+    	Intent intent = getIntent();
+    	recipient	= intent.getStringExtra(DisplayQRCode.RECIPIENT);
+    	amount 		= intent.getStringExtra(DisplayQRCode.AMOUNT);
+    	currency	= intent.getStringExtra(DisplayQRCode.CURRENCY);
     	
     	findViewById(R.id.qr_code_layout).
     		getViewTreeObserver().
     		addOnGlobalLayoutListener(layoutListener);
         firstLayout = true;
-
-        currentQRCodeText = codeText;
     }
 
     /**
@@ -105,16 +119,14 @@ public class DisplayQRCode extends Activity {
     
     private class MyEncodingThread implements Runnable {
     	private final ImageView imageView;
-    	private final String text;
     	
-    	MyEncodingThread(final ImageView imageView, final String text) {
+    	MyEncodingThread(final ImageView imageView) {
     		this.imageView = imageView;
-    		this.text = text;
-    		
     	}
     	
     	public void run () {
     		try {
+    			String text = DataEncoder.encode(recipient, currency, amount);
 	            ByteMatrix result = new QRCodeWriter().encode
 	            		(text, BarcodeFormat.QR_CODE, DisplayQRCode.this.size,  DisplayQRCode.this.size);
 	            int width = result.getWidth();
@@ -134,7 +146,7 @@ public class DisplayQRCode extends Activity {
 	            
 	            handler.post(new MyImageViewPopulator(imageView, bitmap));
     		} catch(Exception ex) {
-    			// TODO: Handle Exception
+    			Log.e("PortaPayments", "Error during code generation.", ex);
     		}
     	}
     	
