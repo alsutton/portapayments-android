@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -68,6 +69,10 @@ public class ProcessPayment extends Activity {
         webView.getSettings().setSavePassword(false);
         webView.setWebViewClient(new WebViewClient() {
         	@Override
+        	public void onPageStarted(final WebView view, final String url, final Bitmap favicon) {
+        		ProcessPayment.this.setProgress(0);
+        	}
+        	@Override
         	public void onPageFinished(final WebView view, final String url) {
         		ProcessPayment.this.findViewById(R.id.webview_wait_message).setVisibility(View.GONE);
         		view.setVisibility(View.VISIBLE);
@@ -76,7 +81,7 @@ public class ProcessPayment extends Activity {
         webView.setWebChromeClient(new WebChromeClient() {
         	@Override
         	public void onProgressChanged(final WebView view, final int progress) {
-        		ProcessPayment.this.setProgress(progress*1000);
+        		ProcessPayment.this.setProgress(progress*100);
         	}
             @Override         
             public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
@@ -86,6 +91,7 @@ public class ProcessPayment extends Activity {
             }
         });
         webView.addJavascriptInterface(new PortaPaymentsJavascriptInterface(), "PortaPayments");
+        webView.requestFocus();
     }
 
     @Override
