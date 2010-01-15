@@ -3,7 +3,6 @@ package com.portapayment.android;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.ByteMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.portapayment.android.utils.DataEncoder;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -126,7 +125,16 @@ public class DisplayQRCode extends Activity {
     	
     	public void run () {
     		try {
-    			String text = DataEncoder.encode(recipient, currency, amount);
+    			StringBuilder code = new StringBuilder(recipient.length()
+    					+ amount.length() + 6);
+    			code.append("r_");
+    			code.append(amount);
+    			code.append('_');
+    			code.append(currency);
+    			code.append('_');
+    			code.append(recipient);
+    			String text = code.toString();
+    			
 	            ByteMatrix result = new QRCodeWriter().encode
 	            		(text, BarcodeFormat.QR_CODE, DisplayQRCode.this.size,  DisplayQRCode.this.size);
 	            int width = result.getWidth();
