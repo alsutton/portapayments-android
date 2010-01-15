@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -23,6 +25,13 @@ public final class Startup extends Activity {
 	 */
 
 	private static final int SCAN_PAYMENT_CODE = 0;
+	
+	/**
+	 * The IDs of the about menu options
+	 */
+	
+	private static final int	ABOUT_MENU_OPTION = 0,
+								SETTINGS_MENU_OPTION = 1;
 	
 	/**
 	 * The currency button.
@@ -66,24 +75,6 @@ public final class Startup extends Activity {
         		}
         	);
         
-        ((Button)findViewById(R.id.preferences_button)).setOnClickListener(
-        		new OnClickListener() {
-					public void onClick(View v) {
-						Intent startIntent = new Intent(Startup.this, Preferences.class);
-						Startup.this.startActivity(startIntent);
-					}
-        		}
-        	);
-        
-        ((Button)findViewById(R.id.preferences_button)).setOnClickListener(
-        		new OnClickListener() {
-					public void onClick(View v) {
-						Intent startIntent = new Intent(Startup.this, Preferences.class);
-						Startup.this.startActivity(startIntent);
-					}
-        		}
-        	);
-
         EditText amountBox = (EditText)findViewById(R.id.amount);
         amountBox.requestFocus();
         amountBox.setSelection(0, amountBox.getText().length());
@@ -167,7 +158,10 @@ public final class Startup extends Activity {
         return paypalUsername;
     }
     
-    
+    /**
+     * Starts the currency selector.
+     * 
+     */
     protected void selectCurrency() {
     	Builder builder = new AlertDialog.Builder(this);
     	
@@ -197,5 +191,35 @@ public final class Startup extends Activity {
 				
 		builder.setPositiveButton(null, null);
         builder.show();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+      super.onCreateOptionsMenu(menu);
+      menu.add(0, ABOUT_MENU_OPTION, 0, R.string.menu_about)
+      	.setIcon(android.R.drawable.ic_menu_info_details);
+      menu.add(0, SETTINGS_MENU_OPTION, 0, R.string.menu_settings)
+          .setIcon(android.R.drawable.ic_menu_preferences);
+      return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+      switch (item.getItemId()) {
+	      case ABOUT_MENU_OPTION:
+	          AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	          builder.setTitle(getString(R.string.about_title));
+	          builder.setMessage(getString(R.string.about_message));
+	          builder.setIcon(R.drawable.icon);
+	          builder.setPositiveButton(R.string.dialog_ok, null);
+	          builder.show();
+	          break;
+	      case SETTINGS_MENU_OPTION:
+			Intent startIntent = new Intent(Startup.this, Preferences.class);
+			Startup.this.startActivity(startIntent);
+			break;
+	  }
+      return super.onOptionsItemSelected(item);
     }
 }
