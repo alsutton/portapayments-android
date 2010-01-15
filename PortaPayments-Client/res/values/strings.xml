@@ -15,6 +15,7 @@
 	<string name="error_io">An error occurred when talking to PayPal.</string>
 	<string name="error_paypal_process">PayPal refused to process the transfer.</string>
 	<string name="error_general">An error occurred and your payment could not be processed.</string>
+	<string name="error_codegen">A code could not be generated due to an error.</string>
 	
 	<string name="no_paypalid_dialog_title">Missing Email Address</string>
 	<string name="no_paypalid_dialog_message">Please enter the email address you use for PayPal.</string>
