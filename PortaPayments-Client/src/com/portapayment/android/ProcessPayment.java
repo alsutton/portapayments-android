@@ -29,7 +29,7 @@ public class ProcessPayment extends Activity {
 	 * The URL for completed payments.
 	 */
 	
-	private final static String PAYMENT_OK_URL = "http://portapayments.com/pp/PayOK.jsp";
+	private final static String PAYMENT_OK_URL = "http://postpay.portapayments.mobi/ppm/PayOK.jsp";
 	
 	/**
 	 * The URL stub for passing the payment authentication to PayPal
