@@ -22,7 +22,7 @@ import android.webkit.WebViewClient;
 
 import com.portapayment.android.paypal.PayPalHelper;
 import com.portapayment.android.paypal.PayPalHelper.PayPalException;
-
+import com.portapayment.android.paypal.PayPalHelper.PayPalExceptionWithErrorCode;
 
 public class ProcessPayment extends Activity {
 	
@@ -164,6 +164,9 @@ public class ProcessPayment extends Activity {
 	    		paypalAuthURLBuilder.append(sender);
 	    		
 				handler.post(new MyHTMLRedirectHandler(paypalAuthURLBuilder.toString()));
+			} catch (PayPalExceptionWithErrorCode e) {
+				Log.e("PortaPayments", "Error returned by PayPal : "+e.getErrorCode(), e);
+				raiseError(R.string.error_paypal_process);
 			} catch (PayPalException e) {
 				Log.e("PortaPayments", "Error returned by PayPal", e);
 				raiseError(R.string.error_paypal_process);
