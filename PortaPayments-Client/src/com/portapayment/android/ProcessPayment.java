@@ -122,7 +122,11 @@ public class ProcessPayment extends Activity {
     	}
     	
     	public void run () {
-    		int firstUnderscore = qrData.indexOf('_');
+    		if(!qrData.startsWith("r_")) {
+    			raiseError(R.string.error_bad_format);
+    		}
+    		
+    		int firstUnderscore = qrData.indexOf('_', 2);
     		if(firstUnderscore == -1) {
     			raiseError(R.string.error_bad_format);
     		}
@@ -132,7 +136,7 @@ public class ProcessPayment extends Activity {
     			raiseError(R.string.error_bad_format);
     		}
     		
-    		final String amount =  qrData.substring(0, firstUnderscore);
+    		final String amount =  qrData.substring(2, firstUnderscore);
     		String currency = qrData.substring(firstUnderscore+1, secondUnderscore);
     		String recipient = qrData.substring(secondUnderscore+1);
     		
