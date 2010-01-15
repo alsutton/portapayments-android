@@ -69,8 +69,8 @@ public final class PayPalHelper {
 		requestBody.append(recipient);
 		requestBody.append("&receiverList.receiver(0).amount=");
 		requestBody.append(amount);
-		requestBody.append("&returnUrl=http://portapayments.com/pp/PayOK.jsp");
-		requestBody.append("&cancelUrl=http://portapayments.com/pp/PayCancel.jsp");
+		requestBody.append("&returnUrl=http://postpay.portapayments.mobi/ppm/PayOK.jsp");
+		requestBody.append("&cancelUrl=http://postpay.portapayments.mobi/ppm/PayCancelled.jsp");
 		requestBody.append("&requestEnvelope.errorLanguage=en_US");
 		requestBody.append("&clientDetails.ipAddress=127.0.0.1");
 		requestBody.append("&clientDetails.deviceId=");
@@ -96,27 +96,36 @@ public final class PayPalHelper {
 	}
 	
 	public static Map<String,String> postData(final Properties headers, final String data) {
-		HttpURLConnection connection = 
-			setupConnection(PayPalHelper.PAYPAL_URL, headers, null);
+		int retries = 3;
+		while( retries > 0) {
+			HttpURLConnection connection = 
+				setupConnection(PayPalHelper.PAYPAL_URL, headers, null);
 
-		return sendHttpPost(connection, data);
-
+			Map<String,String> results = sendHttpPost(connection, data);
+			if(results != null) {
+				return results;
+			}
+			retries--;
+			try {
+				Thread.sleep(1000L);
+			} catch (InterruptedException e) {
+				; // Do nothing, an interrupted sleep is not a problem
+			}
+		}
+		return null;
 	}
 
 	public static  Map<String,String> sendHttpPost(final HttpURLConnection connection, final String data) {
 		BufferedReader reader = null;
 		
 		try {
-
 			OutputStream os = connection.getOutputStream();
 			os.write(data.toString().getBytes("UTF-8"));
 			os.close();
 			int status = connection.getResponseCode();
 			if (status != 200) {
-				Log.e("PortaPayments", "HTTP Error code " + status
-						+ " received, transaction not submitted");
-				reader = new BufferedReader(new InputStreamReader(connection
-						.getErrorStream()));
+				Log.e("PortaPayments", "HTTP Error code " + status + " received, transaction not submitted");
+				return null;
 			} else {
 				reader = new BufferedReader(new InputStreamReader(connection
 						.getInputStream()));
@@ -213,6 +222,14 @@ public final class PayPalHelper {
 	 */
 	
 	public static final class PayPalExceptionWithErrorCode extends PayPalException {
+		/**
+		 * Generated serial ID.
+		 */
+		private static final long serialVersionUID = -4204297047002736812L;
+		
+		/**
+		 * The error code from PayPal
+		 */
 		private String errorCode;
 		
 		PayPalExceptionWithErrorCode(final String message, final String errorCode) {
@@ -220,6 +237,11 @@ public final class PayPalHelper {
 			this.errorCode = errorCode;
 		}
 
+		/**
+		 * Get the error code.
+		 * 
+		 * @return The error code from PayPal.
+		 */
 		public String getErrorCode() {
 			return errorCode;
 		}
