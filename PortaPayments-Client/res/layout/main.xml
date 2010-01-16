@@ -77,8 +77,8 @@
 							android:layout_alignParentBottom="true"
 							admobsdk:backgroundColor="#FFFFFF"
 							admobsdk:textColor="#FFFFFF"
-							admobsdk:keywords="Android Applications"
+							admobsdk:keywords="Android"
 							admobsdk:refreshInterval="60"
-							admobsdk:testing="true"
+							admobsdk:testing="false"
 	               />
 </LinearLayout>	
