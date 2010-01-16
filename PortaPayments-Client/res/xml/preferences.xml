@@ -19,7 +19,8 @@
     <EditTextPreference
         android:key="preferences_paypal_username"
         android:title="@string/preferences_paypal_username_title"
-        android:summary="@string/preferences_paypal_username_summary"/>
+        android:summary="@string/preferences_paypal_username_summary"
+        android:inputType="textEmailAddress"/>
     <ListPreference
         android:key="preferences_default_currency"
         android:title="@string/preferences_default_currency_title"
