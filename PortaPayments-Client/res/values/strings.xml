@@ -88,5 +88,5 @@
 	<string name="paypal_error_580029">Invalid request</string>
 	<string name="paypal_error_589009">This payment cannot be processed because no payment source is available</string>
 	<string name="paypal_error_589023">If a fractional amount if rounded due to currency conversion, funds could be lost</string>
-	<string name="paypal_error_589039">The email address is invalid. It may not be registered in PayPals System</string>
+	<string name="paypal_error_589039">The email address is invalid. It may not be registered with PayPal</string>
 </resources>
