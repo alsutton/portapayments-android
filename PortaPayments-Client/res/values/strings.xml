@@ -7,6 +7,7 @@
 	<string name="show_qr">Show Code</string>
 	<string name="read_qr">Start Scanner</string>
 	<string name="other_options">Other options</string>
+	<string name="show_code_instructions">The person paying should scan this code.</string>
 
 	<string name="processing_message">The payment is being prepared...</string>
 	<string name="dlg_error_title">An Error Occurred</string>
