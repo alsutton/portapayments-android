@@ -81,7 +81,7 @@
 	<string name="paypal_error_579045">The email account exceeds the receiving limit</string>
 	<string name="paypal_error_579047">The email account exceeds the purse limit</string>
 	<string name="paypal_error_579048">The email account exceeds the sending limit</string>
-	<string name="paypal_error_580001">Invalid request</string>
+	<string name="paypal_error_580001">Invalid request. Please check the other person has set their email address correctly.</string>
 	<string name="paypal_error_580023">Invalid request</string>
 	<string name="paypal_error_580027">The argument is unsupported</string>
 	<string name="paypal_error_580028">A URL is malformed</string>
