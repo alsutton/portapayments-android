@@ -19,12 +19,15 @@
             </intent-filter>
     	</activity>
     	<activity	android:name="Preferences" />
-    	<activity	android:name="ProcessPayment" />
+    	<activity	android:name="ProcessPayment" 
+    				android:configChanges="keyboardHidden|orientation"/>
     	<activity	android:name="com.google.zxing.client.android.CaptureActivity" 
     	    		android:screenOrientation="landscape"
               		android:configChanges="orientation|keyboardHidden"
           			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
-	</application>
+
+    	<meta-data android:value="a14b50b9f2f3a76" android:name="ADMOB_PUBLISHER_ID" />
+    </application>
 	
  	<uses-permission android:name="android.permission.CAMERA"/>
 	<uses-permission android:name="android.permission.INTERNET"/>
@@ -34,6 +37,5 @@
 	<uses-feature android:name="android.hardware.camera" />
 	
     <uses-sdk android:minSdkVersion="3" />
-
-    <meta-data android:value="a14b50b9f2f3a76" android:name="ADMOB_PUBLISHER_ID" />        
+        
 </manifest> 
