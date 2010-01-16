@@ -76,7 +76,7 @@
 							android:layout_height="wrap_content"
 							android:layout_alignParentBottom="true"
 							admobsdk:backgroundColor="#FFFFFF"
-							admobsdk:textColor="#FFFFFF"
+							admobsdk:textColor="#000000"
 							admobsdk:keywords="Android"
 							admobsdk:refreshInterval="60"
 							admobsdk:testing="false"
