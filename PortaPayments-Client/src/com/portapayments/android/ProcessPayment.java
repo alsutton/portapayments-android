@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.portapayments.android.database.PaymentsProvider;
 import com.portapayments.android.paypal.PayPalHelper;
 import com.portapayments.android.paypal.PayPalHelper.PayPalException;
 import com.portapayments.android.paypal.PayPalHelper.PayPalExceptionWithErrorCode;
@@ -128,6 +130,8 @@ public final class ProcessPayment extends Activity {
         	public void onPageFinished(final WebView view, final String url) {
         		ProcessPayment.this.findViewById(R.id.webview_wait_message).setVisibility(View.GONE);
         		view.setVisibility(View.VISIBLE);
+        		view.bringToFront();
+        		view.requestFocus();
         	}
         });
         webView.setWebChromeClient(new WebChromeClient() {
@@ -217,6 +221,26 @@ public final class ProcessPayment extends Activity {
 	    			handler.post(new MyHTMLRedirectHandler(ProcessPayment.PAYMENT_OK_URL));
 	    			return;
 	    		}
+	    		
+	    		try {
+	    			final ContentValues[] values = new ContentValues[payments.size()];
+	    			for(int i = 0 ; i < payments.size() ; i++) {
+	    				PayPalHelper.PaymentDetails payment = payments.get(i);
+	    				values[i] = new ContentValues();
+		    			values[i].put("payKey", payKey);
+		    			values[i].put("currency", currency);
+	    				values[i].put("recipientNumber", i);
+	    				values[i].put("recipient", payment.recipient);
+	    				values[i].put("amount", payment.amount);
+	    				values[i].put("eTime", System.currentTimeMillis());
+	    			}
+    				ProcessPayment.this.
+						getContentResolver().
+							bulkInsert(PaymentsProvider.CONTENT_URI, values);
+	    		} catch(Exception ex) {
+	    			Log.e("PortaPayments", "Error recording history", ex);
+	    		}
+	    		
 	    		
 	    		final StringBuilder paypalAuthURLBuilder = new StringBuilder(PAY_URL_STUB_LENGTH+payKey.length());
 	    		paypalAuthURLBuilder.append(PAY_URL_STUB);
