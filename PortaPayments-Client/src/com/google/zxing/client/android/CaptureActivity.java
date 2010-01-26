@@ -47,7 +47,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.zxing.Result;
@@ -65,7 +64,6 @@ import com.portapayments.android.R;
 public final class CaptureActivity extends Activity implements SurfaceHolder.Callback {
   private static final String TAG = "CaptureActivity";
 
-  private static final int MAX_RESULT_IMAGE_SIZE = 150;
   private static final long INTENT_RESULT_DURATION = 1500L;
   private static final float BEEP_VOLUME = 0.10f;
   private static final long VIBRATE_DURATION = 200L;
@@ -85,7 +83,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
   private ViewfinderView viewfinderView;
   private View statusView;
-  private View resultView;
   private MediaPlayer mediaPlayer;
   private Result lastResult;
   private boolean hasSurface;
@@ -116,7 +113,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     CameraManager.init(getApplication());
     viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
-    resultView = findViewById(R.id.result_view);
     statusView = findViewById(R.id.status_view);
     handler = null;
     lastResult = null;
@@ -298,26 +294,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
   private void handleDecodeInternally(Result rawResult, Bitmap barcode) {
     statusView.setVisibility(View.GONE);
     viewfinderView.setVisibility(View.GONE);
-    resultView.setVisibility(View.VISIBLE);
 
     if (barcode == null) {
       barcode = ((BitmapDrawable) getResources().getDrawable(R.drawable.unknown_barcode)).getBitmap();
     }
-    ImageView barcodeImageView = (ImageView) findViewById(R.id.barcode_image_view);
-    barcodeImageView.setVisibility(View.VISIBLE);
-    barcodeImageView.setMaxWidth(MAX_RESULT_IMAGE_SIZE);
-    barcodeImageView.setMaxHeight(MAX_RESULT_IMAGE_SIZE);
-    barcodeImageView.setImageBitmap(barcode);
-
-    TextView formatTextView = (TextView) findViewById(R.id.format_text_view);
-    formatTextView.setVisibility(View.VISIBLE);
-    formatTextView.setText(getString(R.string.msg_default_format) + ": " +
-        rawResult.getBarcodeFormat().toString());
-
-    ResultHandler resultHandler = ResultHandlerFactory.makeResultHandler(this, rawResult);
-    TextView typeTextView = (TextView) findViewById(R.id.type_text_view);
-    typeTextView.setText(getString(R.string.msg_default_type) + ": " +
-        resultHandler.getType().toString());
   }
 
   // Briefly show the contents of the barcode, then handle the result outside Barcode Scanner.
@@ -428,7 +408,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
   }
 
   private void resetStatusView() {
-    resultView.setVisibility(View.GONE);
     statusView.setVisibility(View.VISIBLE);
     statusView.setBackgroundColor(getResources().getColor(R.color.status_view));
     viewfinderView.setVisibility(View.VISIBLE);
