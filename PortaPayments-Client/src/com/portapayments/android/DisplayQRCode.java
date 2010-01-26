@@ -1,15 +1,7 @@
 package com.portapayments.android;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.common.ByteMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
-
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnCancelListener;
-import android.content.DialogInterface.OnClickListener;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,7 +12,11 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
 import android.widget.ImageView;
 
-public class DisplayQRCode extends Activity {
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.common.ByteMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+
+public final class DisplayQRCode extends Activity {
 	
 	/**
 	 * The intent extra parameters.
@@ -122,14 +118,14 @@ public class DisplayQRCode extends Activity {
      */
 
     public void raiseError(final int errorMessageId) {
-    	handler.post(new MyErrorPoster(errorMessageId));
+    	handler.post(ErrorPoster.getClosingError(this, errorMessageId));
     }
 
     /**
      * Class to encoding the data into a QR code then display it.
      */
     
-    private class MyEncodingThread implements Runnable {
+    private final class MyEncodingThread implements Runnable {
     	private final ImageView imageView;
     	
     	MyEncodingThread(final ImageView imageView) {
@@ -140,10 +136,10 @@ public class DisplayQRCode extends Activity {
     		try {
     			StringBuilder code = new StringBuilder(recipient.length()
     					+ amount.length() + 6);
-    			code.append("r_");
-    			code.append(amount);
-    			code.append('_');
+    			code.append("r\n");
     			code.append(currency);
+    			code.append('\n');
+    			code.append(amount);
     			code.append('_');
     			code.append(recipient);
     			String text = code.toString();
@@ -174,7 +170,7 @@ public class DisplayQRCode extends Activity {
     	
     }
     
-	private static class MyImageViewPopulator implements Runnable {
+	private static final class MyImageViewPopulator implements Runnable {
 		private ImageView imageView;
 		private Bitmap bitmap;
 		
@@ -187,34 +183,4 @@ public class DisplayQRCode extends Activity {
 			imageView.setImageBitmap(bitmap);
 		}
 	}
-        
-    /**
-     * Runnable to hand to the handler to handle the bouncing to the web page (handle handle handle :)).
-     */
-    
-    private class MyErrorPoster implements Runnable {
-    	private int errorMessageId;
-    	
-    	MyErrorPoster(final int errorMessageId) {
-    		this.errorMessageId = errorMessageId;
-    	}
-    	
-    	public void run() {
-        	new AlertDialog.Builder(DisplayQRCode.this)
-    		.setIcon(android.R.drawable.ic_dialog_alert)
-    		.setTitle(R.string.dlg_error_title)
-    		.setMessage(errorMessageId)
-    		.setPositiveButton(R.string.dialog_ok, new OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					DisplayQRCode.this.finish();
-				}
-    		})
-    		.setOnCancelListener(new OnCancelListener() {
-				public void onCancel(DialogInterface dialog) {
-					DisplayQRCode.this.finish();					
-				}    			
-    		})
-    		.show();
-    	}
-    }
 }

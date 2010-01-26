@@ -8,6 +8,7 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -34,8 +35,8 @@ public final class PayPalHelper {
 	
 	
 	public static String startPayment(final Context context, final String sender, 
-			final String recipient, final String currency,
-			final String amount ) throws ClientProtocolException, IOException {
+			final String currency, final List<PaymentDetails> payments ) 
+		throws ClientProtocolException, IOException {
 	
 		Properties headers = new Properties();
 		
@@ -65,10 +66,17 @@ public final class PayPalHelper {
 		requestBody.append("&actionType=PAY&currencyCode=");
 		requestBody.append(currency);
 		requestBody.append("&feesPayer=EACHRECEIVER");
-		requestBody.append("&receiverList.receiver(0).email=");
-		requestBody.append(recipient);
-		requestBody.append("&receiverList.receiver(0).amount=");
-		requestBody.append(amount);
+		for(int i = 0 ; i < payments.size() ; i++) {
+			PaymentDetails details = payments.get(i);
+			requestBody.append("&receiverList.receiver(");
+			requestBody.append(i);
+			requestBody.append(").email=");
+			requestBody.append(details.recipient);
+			requestBody.append("&receiverList.receiver(");
+			requestBody.append(i);
+			requestBody.append(").amount=");
+			requestBody.append(details.amount);
+		}
 		requestBody.append("&returnUrl=http://postpay.portapayments.mobi/ppm/PayOK.jsp");
 		requestBody.append("&cancelUrl=http://postpay.portapayments.mobi/ppm/PayCancelled.jsp");
 		requestBody.append("&requestEnvelope.errorLanguage=en_US");
@@ -246,4 +254,14 @@ public final class PayPalHelper {
 			return errorCode;
 		}
 	}
+	
+    
+    /**
+     * Class holding the details of a payment to make
+     */
+    
+    public static final class PaymentDetails {
+    	public String recipient;
+    	public String amount;
+    }
 }

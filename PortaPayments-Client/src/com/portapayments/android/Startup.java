@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,6 +39,12 @@ public final class Startup extends Activity {
 	 */
 	
 	private Button currencyButton;
+	
+	/**
+	 * Handler for manipulating the UI outside of the UI thread.
+	 */
+	
+	private final Handler handler = new Handler();
 	
     /** Called when the activity is first created. */
     @Override
@@ -100,13 +107,29 @@ public final class Startup extends Activity {
     
     protected void onActivityResult(int requestCode, int resultCode,
             Intent data) {
-        if (requestCode == SCAN_PAYMENT_CODE) {
-            if (resultCode == RESULT_OK) {
-            	Intent startIntent = new Intent(this, ProcessPayment.class);
-            	startIntent.putExtra(ProcessPayment.PAYMENT_DATA_EXTRA, data.getStringExtra(Intents.Scan.RESULT));
-            	startActivity(startIntent);
-            }
+        if (requestCode == SCAN_PAYMENT_CODE
+        &&	resultCode == RESULT_OK) {
+           	parseScannedData( data.getStringExtra(Intents.Scan.RESULT) );
         }
+    }
+    
+    /**
+     * Handle some scanned data
+     */
+    
+    private void parseScannedData(final String data) {
+    	if(data != null && data.length() > 3) {
+			if(data.startsWith("r\n")) {
+		    	Intent startIntent = new Intent(this, ProcessPayment.class);
+		    	startIntent.putExtra(ProcessPayment.PAYMENT_DATA_EXTRA, data);
+		    	startActivity(startIntent);
+		    	return;
+	    	} else if (data.startsWith("s\n")) {
+	    		return;
+	    	}
+    	}
+    	
+		raiseError(R.string.error_bad_format);
     }
     
     /**
@@ -221,5 +244,15 @@ public final class Startup extends Activity {
 			break;
 	  }
       return super.onOptionsItemSelected(item);
+    }
+    
+    /**
+     * Raise an error.
+     * 
+     * @param errorMessageId The resource ID for the error message.
+     */
+
+    public void raiseError(final int errorMessageId) {
+    	handler.post(new ErrorPoster(this, errorMessageId, null, null));
     }
 }

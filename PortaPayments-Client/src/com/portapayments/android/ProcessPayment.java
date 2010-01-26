@@ -1,15 +1,13 @@
 package com.portapayments.android;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnCancelListener;
-import android.content.DialogInterface.OnClickListener;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -163,10 +161,12 @@ public final class ProcessPayment extends Activity {
    
     /**
      * Raise an error.
+     * 
+     * @param errorMessageId The resource ID for the error message.
      */
 
     public void raiseError(final int errorMessageId) {
-    	handler.post(new MyErrorPoster(errorMessageId));
+    	handler.post(ErrorPoster.getClosingError(this, errorMessageId));
     }
     
     /**
@@ -182,30 +182,31 @@ public final class ProcessPayment extends Activity {
     	}
     	
     	public void run () {
-    		if(!qrData.startsWith("r_")) {
+    		if(!qrData.startsWith("r\n")) {
     			raiseError(R.string.error_bad_format);
     		}
     		
-    		int firstUnderscore = qrData.indexOf('_', 2);
-    		if(firstUnderscore == -1) {
-    			raiseError(R.string.error_bad_format);
+    		int currencyEnd = qrData.indexOf('\n', 2);
+    		if(currencyEnd == -1) {
+    			raiseError(R.string.error_bad_format);    			
     		}
+    		String currency = qrData.substring(2, currencyEnd);
     		
-    		int secondUnderscore = qrData.indexOf('_', firstUnderscore+1);
-    		if(secondUnderscore == -1) {
-    			raiseError(R.string.error_bad_format);
+			List<PayPalHelper.PaymentDetails> payments = 
+				new ArrayList<PayPalHelper.PaymentDetails>();
+    		int currentIdx = currencyEnd+1;
+    		while(currentIdx < qrData.length()) {
+    			currentIdx = parsePaymentsLine(payments, currentIdx);
     		}
-    		
-    		final String amount =  qrData.substring(2, firstUnderscore);
-    		String currency = qrData.substring(firstUnderscore+1, secondUnderscore);
-    		String recipient = qrData.substring(secondUnderscore+1);
     		
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ProcessPayment.this);
             String sender = prefs.getString(Preferences.PAYPAL_USERNAME, "");
     		
 			try {
-				final String payKey = PayPalHelper.startPayment(ProcessPayment.this, 
-						sender, recipient, currency, amount);
+				final String payKey = 
+					PayPalHelper.startPayment(
+						ProcessPayment.this, sender, currency, payments
+					);
 	    		if(payKey == null) {
 	    			handler.post(new MyHTMLRedirectHandler(ProcessPayment.PAYMENT_OK_URL));
 	    			return;
@@ -238,18 +239,50 @@ public final class ProcessPayment extends Activity {
 			} catch (IOException e) {
 				Log.e("PortaPayments", "Error talking to PayPal.", e );
 				raiseError(R.string.error_io);
+			} catch (BarcodeFormatException bfe) {
+				raiseError(R.string.error_bad_format);				
 			} catch (Exception e) {
 				Log.e("PortaPayments", "Non-specific error", e);
 				raiseError(R.string.error_general);
 			}
     	}
+
+        /**
+         * Parse a payments line.
+         */
+        
+        private int parsePaymentsLine(List<PayPalHelper.PaymentDetails> payments, final int startIdx) {
+        	int lineEnd = qrData.indexOf('\n', startIdx);
+        	if(lineEnd == -1) {
+        		lineEnd = qrData.length();
+        	}
+        	
+        	char c;
+        	int pos = startIdx;
+        	StringBuilder dataBuilder = new StringBuilder(lineEnd - startIdx);
+        	while(pos < lineEnd && (c = qrData.charAt(pos)) != '_') {
+	        	dataBuilder.append(c);
+	        	pos++;
+        	}       
+        	
+        	if(pos > lineEnd-6 ) {
+        		throw new BarcodeFormatException("Error in line format : "+qrData.substring(startIdx, lineEnd));
+        	}
+
+        	final PayPalHelper.PaymentDetails payment = new PayPalHelper.PaymentDetails();
+        	payment.amount = dataBuilder.toString();        	
+        	payment.recipient = qrData.substring(pos+1, lineEnd);
+        	payments.add(payment);
+        	
+    		return lineEnd;
+        }
     }
     
     /**
      * Runnable to hand to the handler to handle the bouncing to the web page (handle handle handle :)).
      */
     
-    private class MyHTMLRedirectHandler implements Runnable {
+    private final class MyHTMLRedirectHandler implements Runnable {
     	private String url;
     	
     	MyHTMLRedirectHandler(final String url) {
@@ -258,36 +291,6 @@ public final class ProcessPayment extends Activity {
     	
     	public void run() {
     		webView.loadUrl(url);
-    	}
-    }
-    
-    /**
-     * Runnable to hand to the handler to handle the bouncing to the web page (handle handle handle :)).
-     */
-    
-    private class MyErrorPoster implements Runnable {
-    	private int errorMessageId;
-    	
-    	MyErrorPoster(final int errorMessageId) {
-    		this.errorMessageId = errorMessageId;
-    	}
-    	
-    	public void run() {
-        	new AlertDialog.Builder(ProcessPayment.this)
-    		.setIcon(android.R.drawable.ic_dialog_alert)
-    		.setTitle(R.string.dlg_error_title)
-    		.setMessage(errorMessageId)
-    		.setPositiveButton(R.string.dialog_ok, new OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					ProcessPayment.this.finish();
-				}
-    		})
-    		.setOnCancelListener(new OnCancelListener() {
-				public void onCancel(DialogInterface dialog) {
-					ProcessPayment.this.finish();					
-				}    			
-    		})
-    		.show();
     	}
     }
     
@@ -310,6 +313,21 @@ public final class ProcessPayment extends Activity {
 					ProcessPayment.this.finish();
 				}
     		});
+    	}
+    }
+    
+    /**
+     * Exception thrown if the barcode format is incorrect
+     */
+    
+    private final static class BarcodeFormatException extends RuntimeException {
+    	/**
+		 * Generated Serial Number
+		 */
+		private static final long serialVersionUID = -1787478441287761462L;
+
+		BarcodeFormatException(final String message) {
+    		super(message);
     	}
     }
 }
