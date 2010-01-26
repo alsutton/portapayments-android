@@ -24,7 +24,8 @@ public final class DisplayQRCode extends Activity {
 	
 	public static final String RECIPIENT = "recipient",
 								AMOUNT = "amount",
-								CURRENCY = "currency";
+								CURRENCY = "currency",
+								MEMO = "memo";
 	
 	/**
 	 * The recipient from the code
@@ -43,6 +44,12 @@ public final class DisplayQRCode extends Activity {
 	 */
 	
 	private String currency;
+	
+	/**
+	 * The note for this payment
+	 */
+	
+	private String memo;
 	
 	/**
 	 * Flag to determine the first pass of the layout engine which allows
@@ -106,6 +113,7 @@ public final class DisplayQRCode extends Activity {
     	recipient	= intent.getStringExtra(DisplayQRCode.RECIPIENT);
     	amount 		= intent.getStringExtra(DisplayQRCode.AMOUNT);
     	currency	= intent.getStringExtra(DisplayQRCode.CURRENCY);
+    	memo		= intent.getStringExtra(DisplayQRCode.MEMO);
     	
     	findViewById(R.id.qr_code_layout).
     		getViewTreeObserver().
@@ -137,6 +145,8 @@ public final class DisplayQRCode extends Activity {
     			StringBuilder code = new StringBuilder(recipient.length()
     					+ amount.length() + 6);
     			code.append("r\n");
+    			code.append(memo);
+    			code.append('\n');
     			code.append(currency);
     			code.append('\n');
     			code.append(amount);

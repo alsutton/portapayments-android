@@ -142,6 +142,7 @@ public final class Startup extends Activity {
         	return;
         }
         
+        final String memo = ((EditText) findViewById(R.id.note)).getText().toString();
         final String amount = ((EditText) findViewById(R.id.amount)).getText().toString();
     	final String currency = currencyButton.getText().toString();
     	
@@ -150,6 +151,7 @@ public final class Startup extends Activity {
 			startIntent.putExtra(DisplayQRCode.RECIPIENT, recipient);
 			startIntent.putExtra(DisplayQRCode.AMOUNT, amount);
 			startIntent.putExtra(DisplayQRCode.CURRENCY, currency);
+			startIntent.putExtra(DisplayQRCode.MEMO, memo);
 			Startup.this.startActivity(startIntent);    	
 		} catch (Exception e) {
 			e.printStackTrace();

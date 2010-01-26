@@ -186,11 +186,17 @@ public final class ProcessPayment extends Activity {
     			raiseError(R.string.error_bad_format);
     		}
     		
-    		int currencyEnd = qrData.indexOf('\n', 2);
+    		int memoEnd = qrData.indexOf('\n', 2);
+    		if(memoEnd == -1) {
+    			raiseError(R.string.error_bad_format);    			
+    		}
+    		String memo = qrData.substring(2, memoEnd);
+    		
+    		int currencyEnd = qrData.indexOf('\n', memoEnd+1);
     		if(currencyEnd == -1) {
     			raiseError(R.string.error_bad_format);    			
     		}
-    		String currency = qrData.substring(2, currencyEnd);
+    		String currency = qrData.substring(memoEnd+1, currencyEnd);
     		
 			List<PayPalHelper.PaymentDetails> payments = 
 				new ArrayList<PayPalHelper.PaymentDetails>();
@@ -205,7 +211,7 @@ public final class ProcessPayment extends Activity {
 			try {
 				final String payKey = 
 					PayPalHelper.startPayment(
-						ProcessPayment.this, sender, currency, payments
+						ProcessPayment.this, sender, memo, currency, payments
 					);
 	    		if(payKey == null) {
 	    			handler.post(new MyHTMLRedirectHandler(ProcessPayment.PAYMENT_OK_URL));
@@ -265,6 +271,7 @@ public final class ProcessPayment extends Activity {
 	        	pos++;
         	}       
         	
+        	Log.e("PortaPayments", "Reading : "+qrData.substring(startIdx, lineEnd));
         	if(pos > lineEnd-6 ) {
         		throw new BarcodeFormatException("Error in line format : "+qrData.substring(startIdx, lineEnd));
         	}
@@ -274,7 +281,7 @@ public final class ProcessPayment extends Activity {
         	payment.recipient = qrData.substring(pos+1, lineEnd);
         	payments.add(payment);
         	
-    		return lineEnd;
+    		return lineEnd+1;
         }
     }
     

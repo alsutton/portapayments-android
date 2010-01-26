@@ -35,7 +35,7 @@ public final class PayPalHelper {
 	
 	
 	public static String startPayment(final Context context, final String sender, 
-			final String currency, final List<PaymentDetails> payments ) 
+			final String memo, final String currency, final List<PaymentDetails> payments ) 
 		throws ClientProtocolException, IOException {
 	
 		Properties headers = new Properties();
@@ -82,12 +82,12 @@ public final class PayPalHelper {
 		requestBody.append("&requestEnvelope.errorLanguage=en_US");
 		requestBody.append("&clientDetails.ipAddress=127.0.0.1");
 		requestBody.append("&clientDetails.deviceId=");
-		requestBody.append("&memo=Paid via PortaPayments");
 		if(devID != null && devID.length() > 0) {
 			requestBody.append(devID);
 		} else {
 			requestBody.append("AndroidDevice");
 		}
+		requestBody.append("&memo="+memo);
 		requestBody.append("&clientDetails.applicationId=PortaPayments");
         
         Map<String,String> results = postData(headers, requestBody.toString());
