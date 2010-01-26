@@ -24,6 +24,11 @@
 	<string name="about_title">PortaPayments</string>
 	<string name="about_message">(c)2010 Funky Android Ltd., All Rights Reserved.\n\nIncludes portions of ZXing which is licensed under the Apache license v2.0.</string>
 	
+	<string name="quick_show_qr">Create Code</string>
+	<string name="quick_create_qr">Create request to pay you</string>
+	
+	<string name="view_history_title">Payments made on this device</string>
+	<string name="view_history_button_text">Show Payments</string>
 	<string name="no_paypalid_dialog_title">Missing Email Address</string>
 	<string name="no_paypalid_dialog_message">Please enter the email address you use for PayPal.</string>
 

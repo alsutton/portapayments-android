@@ -23,11 +23,28 @@
 	
 			<TextView	android:layout_width="fill_parent" 
 			    		android:layout_height="wrap_content" 
-			    		android:text="@string/request_payment"
+			    		android:text="@string/scan_request"
+			    		android:layout_marginTop="10dip"
+			    		android:layout_marginBottom="5dip"
+			    		android:gravity="center"
+			    		android:background="#003366"
+			    		android:textSize="6pt"
+			    		android:textColor="#FFFFFF"/>
+			<Button
+				android:id="@+id/read_qr_button"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/read_qr"/>
+				
+			<TextView	android:layout_width="fill_parent" 
+			    		android:layout_height="wrap_content" 
+			    		android:text="@string/quick_create_qr"
 			    		android:gravity="center"
 			    		android:layout_marginTop="10dip"
 			    		android:layout_marginBottom="5dip"
-			    		style="?android:attr/listSeparatorTextViewStyle" />
+			    		android:background="#003366"
+			    		android:textSize="6pt"
+			    		android:textColor="#FFFFFF"/>
 			<TableLayout	android:layout_width="fill_parent"
 							android:layout_height="wrap_content">
 				<TableRow>
@@ -48,25 +65,36 @@
 					    		android:layout_alignTop="@id/amount"/>
 				</TableRow>
 			</TableLayout>
+			<EditText	android:id="@+id/note"
+			    		android:layout_width="fill_parent" 
+			    		android:layout_height="wrap_content" 
+			    		android:layout_weight="1"
+			    		android:gravity="left"
+			    		android:text="Note: Paid via PortaPayments"
+			    		android:imeOptions="actionDone" 
+			    		android:singleLine="true"/>
 			<Button		android:id="@+id/show_qr_button"
 						android:layout_width="fill_parent"
 						android:layout_height="wrap_content"
 						android:layout_alignParentRight="true"
-						android:text="@string/show_qr"/>
-						
+						android:text="@string/quick_show_qr"/>
+
 			<TextView	android:layout_width="fill_parent" 
 			    		android:layout_height="wrap_content" 
-			    		android:text="@string/scan_request"
+			    		android:text="@string/view_history_title"
 			    		android:layout_marginTop="10dip"
 			    		android:layout_marginBottom="5dip"
 			    		android:gravity="center"
-			    		style="?android:attr/listSeparatorTextViewStyle"/>
+			    		android:background="#003366"
+			    		android:textSize="6pt"
+			    		android:textColor="#FFFFFF"/>
 			<Button
-				android:id="@+id/read_qr_button"
+				android:id="@+id/view_history_button"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
-				android:text="@string/read_qr"/>
+				android:text="@string/view_history_button_text"/>
 		</LinearLayout>
+
 	</ScrollView>
 	<com.admob.android.ads.AdView
 							xmlns:admobsdk="http://schemas.android.com/apk/res/com.portapayments.android"				  
@@ -79,6 +107,6 @@
 							admobsdk:textColor="#000000"
 							admobsdk:keywords="Android"
 							admobsdk:refreshInterval="60"
-							admobsdk:testing="false"
+							admobsdk:testing="true"
 	               />
 </LinearLayout>	
