@@ -66,7 +66,8 @@ public final class Startup extends Activity {
         		}
         	);
         
-        ((Button)findViewById(R.id.read_qr_button)).setOnClickListener(
+        Button readQrButton = (Button)findViewById(R.id.read_qr_button);
+        readQrButton.setOnClickListener(
         		new OnClickListener() {
 					public void onClick(View v) {
 				    	final String recipient = getPayPalUsername();
@@ -91,9 +92,9 @@ public final class Startup extends Activity {
         		}
         	);
         
-        EditText amountBox = (EditText)findViewById(R.id.amount);
-        amountBox.requestFocus();
-        amountBox.setSelection(0, amountBox.getText().length());
+//        EditText amountBox = (EditText)findViewById(R.id.amount);
+//        amountBox.requestFocus();
+//        amountBox.setSelection(0, amountBox.getText().length());
 
         currencyButton = (Button)findViewById(R.id.currency);
         currencyButton.setOnClickListener(new OnClickListener() {
@@ -108,6 +109,7 @@ public final class Startup extends Activity {
         }
         
         getPayPalUsername();
+        readQrButton.requestFocus();
     }
 
     /**
