@@ -82,6 +82,15 @@ public final class Startup extends Activity {
         		}
         	);
         
+        ((Button)findViewById(R.id.view_history_button)).setOnClickListener(
+        		new OnClickListener() {
+					public void onClick(View v) {
+						Intent startIntent = new Intent(Startup.this, History.class);
+						Startup.this.startActivity(startIntent);
+					}
+        		}
+        	);
+        
         EditText amountBox = (EditText)findViewById(R.id.amount);
         amountBox.requestFocus();
         amountBox.setSelection(0, amountBox.getText().length());
