@@ -25,7 +25,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
     	</activity>
+    	<activity	android:name="CreateRequestActivity"/>
     	<activity	android:name="History"/>
+    	<activity	android:name="PaymentDetailsActivity" />
     	<activity	android:name="Preferences" />
     	<activity	android:name="ProcessPayment" 
     				android:configChanges="keyboardHidden|orientation"/>

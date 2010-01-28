@@ -28,30 +28,6 @@ public final class DisplayQRCode extends Activity {
 								MEMO = "memo";
 	
 	/**
-	 * The recipient from the code
-	 */
-	
-	private String recipient;
-	
-	/**
-	 * The amount for the code
-	 */
-	
-	private String amount;
-	
-	/**
-	 * The currency for the code.
-	 */
-	
-	private String currency;
-	
-	/**
-	 * The note for this payment
-	 */
-	
-	private String memo;
-	
-	/**
 	 * Flag to determine the first pass of the layout engine which allows
 	 * the dimensions of the image view to be determined.
 	 */
@@ -108,13 +84,7 @@ public final class DisplayQRCode extends Activity {
     @Override
     public void onResume() {
     	super.onResume();
-    	
-    	Intent intent = getIntent();
-    	recipient	= intent.getStringExtra(DisplayQRCode.RECIPIENT);
-    	amount 		= intent.getStringExtra(DisplayQRCode.AMOUNT);
-    	currency	= intent.getStringExtra(DisplayQRCode.CURRENCY);
-    	memo		= intent.getStringExtra(DisplayQRCode.MEMO);
-    	
+    	    	
     	findViewById(R.id.qr_code_layout).
     		getViewTreeObserver().
     		addOnGlobalLayoutListener(layoutListener);
@@ -142,16 +112,47 @@ public final class DisplayQRCode extends Activity {
     	
     	public void run () {
     		try {
-    			StringBuilder code = new StringBuilder(recipient.length()
-    					+ amount.length() + 6);
+    	    	Intent intent = DisplayQRCode.this.getIntent();
+
+    	    	final String currency = intent.getStringExtra(DisplayQRCode.CURRENCY);
+    	    	final String memo = intent.getStringExtra(DisplayQRCode.MEMO);
+
+    	    	StringBuilder code = new StringBuilder(128);
     			code.append("r\n");
     			code.append(memo);
     			code.append('\n');
     			code.append(currency);
-    			code.append('\n');
-    			code.append(amount);
-    			code.append('_');
-    			code.append(recipient);
+    			
+    			for(int i = 0 ; i < 6 ; i++) {	
+    				final StringBuilder recipientParam = new StringBuilder(RECIPIENT);
+    				recipientParam.append('_');
+    				recipientParam.append(i);
+    				final String recipient = intent.getStringExtra(recipientParam.toString());
+    				if(recipient == null || recipient.length() == 0) {
+    					continue;
+    				}
+    				
+    				StringBuilder amountParam = new StringBuilder(AMOUNT);
+    				amountParam.append('_');
+    				amountParam.append(i);
+    				final String amount = intent.getStringExtra(amountParam.toString());
+    				if(amount == null || amount.length() == 0) {
+    					continue;
+    				}
+    				try {
+    					double parsedDouble = Double.parseDouble(amount);
+    					if(parsedDouble < 0 ) {
+    						continue;
+    					}
+    				} catch( Exception ex ) {
+    					continue;
+    				}
+        			
+        			code.append('\n');
+        			code.append(amount);
+        			code.append('_');
+        			code.append(recipient);
+    			}
     			String text = code.toString();
     			
 	            ByteMatrix result = new QRCodeWriter().encode

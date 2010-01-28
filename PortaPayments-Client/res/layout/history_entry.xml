@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:paddingTop="5dip"
+  android:paddingBottom="5dip"
+  android:paddingLeft="5dip"
+  android:paddingRight="5dip"  >
+	<LinearLayout	android:id="@+id/payment"
+		  			android:layout_width="fill_parent"
+		  			android:layout_height="wrap_content"
+		  			android:orientation="horizontal">
+		<TextView	android:id="@+id/date"
+					android:textColor="#400"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"/>
+		<TextView	android:id="@+id/total"
+					android:gravity="right"
+					android:textColor="#800"
+					android:textStyle="bold"
+					android:layout_alignParentRight="true"
+  					android:layout_width="fill_parent"
+  					android:layout_height="wrap_content"/>
+	</LinearLayout>
+	<include layout="@layout/payment_list" />
+</LinearLayout>

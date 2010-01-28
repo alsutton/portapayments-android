@@ -17,18 +17,21 @@
 	<string name="error_paypal_process">PayPal refused to process the transfer.</string>
 	<string name="error_general">An error occurred and your payment could not be processed.</string>
 	<string name="error_codegen">A code could not be generated due to an error.</string>
-	
+	<string name="error_history_empty">No payment requests have been scanned.</string>
 	<string name="menu_about">About</string>
 	<string name="menu_settings">Settings</string>
 	
 	<string name="about_title">PortaPayments</string>
 	<string name="about_message">(c)2010 Funky Android Ltd., All Rights Reserved.\n\nIncludes portions of ZXing which is licensed under the Apache license v2.0.</string>
 	
-	<string name="quick_show_qr">Create Code</string>
-	<string name="quick_create_qr">Create request to pay you</string>
+	<string name="create_qr_quick">Create "Pay-Me" Code</string>
+	<string name="create_qr_quick_button_text">Create Payment Request</string>
+	<string name="create_qr">Create Multiple-Recipient Code</string>
+	<string name="create_qr_button_text">Enter Payment Request Details</string>
+	<string name="create_request_instructions">Please enter each recipient and the amount they should receive below;</string>
 	
-	<string name="view_history_title">Payments made on this device</string>
-	<string name="view_history_button_text">Show Payments</string>
+	<string name="note_default">Note: Paid using PortaPayments</string>
+	<string name="create_total">Total :</string>
 	<string name="no_paypalid_dialog_title">Missing Email Address</string>
 	<string name="no_paypalid_dialog_message">Please enter the email address you use for PayPal.</string>
 
@@ -48,8 +51,15 @@
 	<string name="preferences_paypal_title">PayPal Details</string>
 	<string name="preferences_paypal_username_title">PayPal Email Address</string>
 	<string name="preferences_paypal_username_summary">This the email address you log in to PayPal with.</string>
-	<string name="preferences_default_currency_title">Default Currency</string>
-	<string name="preferences_default_currency_summary">The currency you will use most often.</string>
+	<string name="preferences_default_currency_title">Currency</string>
+	<string name="preferences_default_currency_summary">The currency for transactions.</string>
+	
+	<string name="view_history_title">History</string>
+	<string name="view_history_button_text">Scanned Requests</string>
+	<string name="view_scanned_date_title">Date :</string>
+	<string name="view_scanned_amount_title">Amount :</string>	
+	<string name="view_scanned_recipient_title">Recipient :</string>
+	<string name="view_scanned_status_title">Status :</string>
 	
 	<string name="paypal_error_500000">There is a system error</string>
 	<string name="paypal_error_520002">Internal error</string>
@@ -87,7 +97,7 @@
 	<string name="paypal_error_579045">The email account exceeds the receiving limit</string>
 	<string name="paypal_error_579047">The email account exceeds the purse limit</string>
 	<string name="paypal_error_579048">The email account exceeds the sending limit</string>
-	<string name="paypal_error_580001">Invalid request. Please check the other person has set their email address correctly.</string>
+	<string name="paypal_error_580001">Invalid request. Please check all recipients have entered their email addresses correctly.</string>
 	<string name="paypal_error_580023">Invalid request</string>
 	<string name="paypal_error_580027">The argument is unsupported</string>
 	<string name="paypal_error_580028">A URL is malformed</string>

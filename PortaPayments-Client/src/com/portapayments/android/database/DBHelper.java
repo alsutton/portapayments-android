@@ -24,7 +24,7 @@ public final class DBHelper
 	 */
 	
 	private static final String CREATE_STATEMENT = 
-		"CREATE TABLE IF NOT EXISTS payments( _id integer primary key autoincrement, timestamp TEXT DEFAULT CURRENT_TIMESTAMP, recipientNumber INT(4), eTime INT(8), payKey TEXT, recipient TEXT, amount TEXT, currency TEXT )";
+		"CREATE TABLE IF NOT EXISTS payments( _id integer primary key autoincrement, timestamp INT(8), scannedData TEXT, payKey TEXT )";
 	
 	
 	/**

@@ -3,6 +3,15 @@
 	   			android:orientation="vertical"
     			android:layout_width="fill_parent"
     			android:layout_height="fill_parent">
+	<TextView	android:layout_width="fill_parent" 
+	    		android:layout_height="wrap_content" 
+	    		android:text="PortaPayments"
+	    		android:gravity="center"
+	    		android:background="#003366"
+	    		android:textSize="12pt"
+	    		android:textColor="#FFFFFF"
+	    		android:layout_marginBottom="5dip"/>
+	
 	<ScrollView	android:layout_weight="1"
 	    		android:layout_width="fill_parent"
 	    		android:layout_height="fill_parent"
@@ -12,15 +21,6 @@
 		    			android:layout_width="fill_parent"
 		    			android:layout_height="fill_parent">
 		    			
-			<TextView	android:layout_width="fill_parent" 
-			    		android:layout_height="wrap_content" 
-			    		android:text="PortaPayments"
-			    		android:gravity="center"
-			    		android:background="#003366"
-			    		android:textSize="12pt"
-			    		android:textColor="#FFFFFF"
-			    		android:layout_marginBottom="5dip"/>
-	
 			<TextView	android:layout_width="fill_parent" 
 			    		android:layout_height="wrap_content" 
 			    		android:text="@string/scan_request"
@@ -38,7 +38,7 @@
 				
 			<TextView	android:layout_width="fill_parent" 
 			    		android:layout_height="wrap_content" 
-			    		android:text="@string/quick_create_qr"
+			    		android:text="@string/create_qr_quick"
 			    		android:gravity="center"
 			    		android:layout_marginTop="10dip"
 			    		android:layout_marginBottom="5dip"
@@ -54,8 +54,9 @@
 					    		android:layout_weight="1"
 					    		android:gravity="right"
 					    		android:text="1.00"
-					    		android:numeric="integer|decimal"
-					    		android:imeOptions="actionDone" 
+								android:inputType="numberDecimal"
+								android:imeOptions="actionNext"
+								android:numeric="decimal"
 					    		android:singleLine="true"/>
 					<Button		android:id="@+id/currency"
 								android:layout_gravity="right"
@@ -68,18 +69,31 @@
 			<EditText	android:id="@+id/note"
 			    		android:layout_width="fill_parent" 
 			    		android:layout_height="wrap_content" 
-			    		android:layout_weight="1"
-			    		android:gravity="left"
-			    		android:text="Note: Paid via PortaPayments"
+			    		android:text="@string/note_default"
 			    		android:imeOptions="actionDone" 
 			    		android:singleLine="true"/>
-			<Button		android:id="@+id/show_qr_button"
+			<Button		android:id="@+id/create_qr_quick_button"
 						android:layout_width="fill_parent"
 						android:layout_height="wrap_content"
 						android:layout_alignParentRight="true"
-						android:text="@string/quick_show_qr"/>
+						android:text="@string/create_qr_quick_button_text"/>
 
 			<TextView	android:layout_width="fill_parent" 
+			    		android:layout_height="wrap_content" 
+			    		android:text="@string/create_qr"
+			    		android:gravity="center"
+			    		android:layout_marginTop="10dip"
+			    		android:layout_marginBottom="5dip"
+			    		android:background="#003366"
+			    		android:textSize="6pt"
+			    		android:textColor="#FFFFFF"/>
+			<Button		android:id="@+id/create_qr_button"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_alignParentRight="true"
+						android:text="@string/create_qr_button_text"/>
+
+<!-- 			<TextView	android:layout_width="fill_parent" 
 			    		android:layout_height="wrap_content" 
 			    		android:text="@string/view_history_title"
 			    		android:layout_marginTop="10dip"
@@ -92,7 +106,7 @@
 				android:id="@+id/view_history_button"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
-				android:text="@string/view_history_button_text"/>
+				android:text="@string/view_history_button_text"/> -->
 		</LinearLayout>
 
 	</ScrollView>

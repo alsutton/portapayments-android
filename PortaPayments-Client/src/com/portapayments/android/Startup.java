@@ -9,11 +9,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -52,20 +55,7 @@ public final class Startup extends Activity {
         super.onCreate(savedInstanceState);
         super.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main);
-        
-        ((Button)findViewById(R.id.show_qr_button)).setOnClickListener(
-        		new OnClickListener() {
-					public void onClick(View v) {
-				    	final String recipient = getPayPalUsername();
-				        if(recipient == null) {
-				        	return;
-				        }
-
-						generateCode();
-					}
-        		}
-        	);
-        
+                
         Button readQrButton = (Button)findViewById(R.id.read_qr_button);
         readQrButton.setOnClickListener(
         		new OnClickListener() {
@@ -82,7 +72,50 @@ public final class Startup extends Activity {
 					}
         		}
         	);
+
+        ((Button)findViewById(R.id.create_qr_quick_button)).setOnClickListener(
+        		new OnClickListener() {
+					public void onClick(View v) {
+				    	final String recipient = getPayPalUsername();
+				        if(recipient == null) {
+				        	return;
+				        }
+
+						generateCode();
+					}
+        		}
+        	);
+
+        ((Button)findViewById(R.id.create_qr_button)).setOnClickListener(
+        		new OnClickListener() {
+					public void onClick(View v) {
+						Intent startIntent = new Intent(Startup.this, CreateRequestActivity.class);
+						Startup.this.startActivity(startIntent);
+					}
+        		}
+        	);
         
+        
+		((EditText)findViewById(R.id.amount)).
+			setOnKeyListener(new OnKeyListener(){
+				public boolean onKey(View v, int keyCode, KeyEvent event) {
+					Editable text = ((EditText)v).getText();
+					int length = text.length();
+					int dotIdx = -1;
+					for(int i = 0 ; i < length ; i++) {
+						if(text.charAt(i) == '.') {
+							dotIdx = i;
+							break;
+						}
+					}
+					if( dotIdx != -1 && dotIdx + 3 < length ) {
+						text.delete(dotIdx+3, length);
+					}
+					
+					return false;
+				}    				
+			});
+/*        
         ((Button)findViewById(R.id.view_history_button)).setOnClickListener(
         		new OnClickListener() {
 					public void onClick(View v) {
@@ -91,7 +124,7 @@ public final class Startup extends Activity {
 					}
         		}
         	);
-        
+*/        
 //        EditText amountBox = (EditText)findViewById(R.id.amount);
 //        amountBox.requestFocus();
 //        amountBox.setSelection(0, amountBox.getText().length());
@@ -159,8 +192,8 @@ public final class Startup extends Activity {
     	
 		try {
 			Intent startIntent = new Intent(Startup.this, DisplayQRCode.class);
-			startIntent.putExtra(DisplayQRCode.RECIPIENT, recipient);
-			startIntent.putExtra(DisplayQRCode.AMOUNT, amount);
+			startIntent.putExtra(DisplayQRCode.RECIPIENT+"_0", recipient);
+			startIntent.putExtra(DisplayQRCode.AMOUNT+"_0", amount);
 			startIntent.putExtra(DisplayQRCode.CURRENCY, currency);
 			startIntent.putExtra(DisplayQRCode.MEMO, memo);
 			Startup.this.startActivity(startIntent);    	

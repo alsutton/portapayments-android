@@ -8,11 +8,12 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.http.client.ClientProtocolException;
+
+import com.portapayments.android.util.DataDecoder;
 
 import android.content.Context;
 import android.telephony.TelephonyManager;
@@ -35,7 +36,7 @@ public final class PayPalHelper {
 	
 	
 	public static String startPayment(final Context context, final String sender, 
-			final String memo, final String currency, final List<PaymentDetails> payments ) 
+			final DataDecoder.RequestDetails request ) 
 		throws ClientProtocolException, IOException {
 	
 		Properties headers = new Properties();
@@ -64,10 +65,10 @@ public final class PayPalHelper {
         requestBody.append("senderEmail=");
         requestBody.append(sender);  
 		requestBody.append("&actionType=PAY&currencyCode=");
-		requestBody.append(currency);
+		requestBody.append(request.currency);
 		requestBody.append("&feesPayer=EACHRECEIVER");
-		for(int i = 0 ; i < payments.size() ; i++) {
-			PaymentDetails details = payments.get(i);
+		for(int i = 0 ; i < request.payments.size() ; i++) {
+			DataDecoder.PaymentDetails details = request.payments.get(i);
 			requestBody.append("&receiverList.receiver(");
 			requestBody.append(i);
 			requestBody.append(").email=");
@@ -87,7 +88,7 @@ public final class PayPalHelper {
 		} else {
 			requestBody.append("AndroidDevice");
 		}
-		requestBody.append("&memo="+memo);
+		requestBody.append("&memo="+request.memo);
 		requestBody.append("&clientDetails.applicationId=PortaPayments");
         
         Map<String,String> results = postData(headers, requestBody.toString());
@@ -103,6 +104,57 @@ public final class PayPalHelper {
         return results.get("payKey");
 	}
 	
+
+	/**
+	 * Get the details of a specific payment
+	 * 
+	 * @throws IOException 
+	 * @throws ClientProtocolException 
+	 */
+	
+	public static Map<String,String> getPaymentDetails(final Context context, final String payKey ) 
+		throws ClientProtocolException, IOException {
+	
+		Properties headers = new Properties();
+		
+		String devID = null;
+		try {
+			final TelephonyManager tMgr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+			if(tMgr != null) {
+				devID = tMgr.getDeviceId();
+				if(devID != null) {
+					headers.put("X-PAYPAL-DEVICE_ID", devID); 				
+				}
+			}
+		} catch(Exception ex) {
+			; // Do nothing, device ID is optional.
+		}
+		headers.put("X-PAYPAL-SECURITY-USERID", "paypal_1223368472_biz_api1.alsutton.com"); 
+		headers.put("X-PAYPAL-SECURITY-PASSWORD","1223368483"); 
+		headers.put("X-PAYPAL-SECURITY-SIGNATURE","AGkOsAbzHqAoa5KajZ8KTeHzbH6-AD9Ogr36rPgfyiyskE63m2KemnVG");
+		headers.put("X-PAYPAL-REQUEST-DATA-FORMAT", "NV"); 
+		headers.put("X-PAYPAL-RESPONSE-DATA-FORMAT", "NV");  
+		headers.put("X-PAYPAL-APPLICATION-ID", "APP-80W284485P519543T");
+		
+
+		StringBuilder requestBody = new StringBuilder();
+        requestBody.append("payKey=");
+        requestBody.append(payKey);
+		requestBody.append("&requestEnvelope.errorLanguage=en_US");
+        
+        Map<String,String> results = postData(headers, requestBody.toString());
+        if(results == null) {
+        	throw new PayPalException("PayPal was unable to start the transaction.");
+        }
+        
+        final String ack = results.get("responseEnvelope.ack");
+        if(ack != null && "Failure".equals(ack)) {
+        	throw new PayPalExceptionWithErrorCode("PayPal generated an error ", results.get("error(0).errorId"));
+        }
+        
+        return results;
+	}
+
 	public static Map<String,String> postData(final Properties headers, final String data) {
 		int retries = 3;
 		while( retries > 0) {
@@ -253,15 +305,5 @@ public final class PayPalHelper {
 		public String getErrorCode() {
 			return errorCode;
 		}
-	}
-	
-    
-    /**
-     * Class holding the details of a payment to make
-     */
-    
-    public static final class PaymentDetails {
-    	public String recipient;
-    	public String amount;
-    }
+	}	
 }

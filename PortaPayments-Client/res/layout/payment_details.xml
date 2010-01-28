@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/qr_code_layout"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:orientation="vertical"
+  android:background="#FFFFFF">
+	<TextView	android:layout_width="fill_parent" 
+	    		android:layout_height="wrap_content" 
+	    		android:text="PortaPayments"
+	    		android:gravity="center"
+	    		android:background="#003366"
+	    		android:textSize="12pt"
+	    		android:textColor="#FFFFFF"
+	    		android:layout_marginBottom="5dip"/>
+	    		
+	<TableLayout	android:layout_width="fill_parent"
+  					android:layout_height="fill_parent">
+  		<TableRow>
+			<TextView	android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:textColor="#000000"
+						android:gravity="right"
+						android:text="@string/view_scanned_date_title"/>
+						
+			<TextView	android:id="@+id/date"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:textColor="#000000"
+						android:gravity="left"/>
+  		</TableRow>				
+  		<TableRow>
+			<TextView	android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:textColor="#000000"
+						android:gravity="right"
+						android:text="@string/view_scanned_amount_title"/>
+						
+			<TextView	android:id="@+id/amount"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:textColor="#000000"
+						android:gravity="left"/>
+  		</TableRow>				
+  		<TableRow>
+			<TextView	android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:textColor="#000000"
+						android:gravity="right"
+						android:text="@string/view_scanned_recipient_title"/>
+						
+			<TextView	android:id="@+id/recipient"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:textColor="#000000"
+						android:gravity="left"/>
+  		</TableRow>				
+  		<TableRow>
+			<TextView	android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:textColor="#000000"
+						android:gravity="right"
+						android:text="@string/view_scanned_status_title"/>
+						
+			<TextView	android:id="@+id/status"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:textColor="#000000"
+						android:gravity="left"/>
+  		</TableRow>				
+  	</TableLayout>
+</LinearLayout>

@@ -1,15 +1,14 @@
 package com.portapayments.android;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -25,6 +24,7 @@ import com.portapayments.android.database.PaymentsProvider;
 import com.portapayments.android.paypal.PayPalHelper;
 import com.portapayments.android.paypal.PayPalHelper.PayPalException;
 import com.portapayments.android.paypal.PayPalHelper.PayPalExceptionWithErrorCode;
+import com.portapayments.android.util.DataDecoder;
 
 public final class ProcessPayment extends Activity {
 	
@@ -186,61 +186,48 @@ public final class ProcessPayment extends Activity {
     	}
     	
     	public void run () {
-    		if(!qrData.startsWith("r\n")) {
-    			raiseError(R.string.error_bad_format);
+    		DataDecoder.RequestDetails request = null;
+    		try {
+    			request = DataDecoder.parseRequest(qrData);
+    		} catch(DataDecoder.FormatException ex) {
+    			Log.e("PortaPayments", "Error in request format :"+qrData, ex);
+				raiseError(R.string.error_bad_format);
     		}
     		
-    		int memoEnd = qrData.indexOf('\n', 2);
-    		if(memoEnd == -1) {
-    			raiseError(R.string.error_bad_format);    			
+    		Uri entryUri = null;
+    		try {
+    			ContentValues values = new ContentValues();
+	    		values.put("scannedData", qrData);
+				values.put("timestamp", System.currentTimeMillis());
+				entryUri = ProcessPayment.this.
+							getContentResolver().
+								insert(PaymentsProvider.CONTENT_URI, values);
+    		} catch(Exception ex) {
+    			Log.e("PortaPayments", "Error recording history", ex);
     		}
-    		String memo = qrData.substring(2, memoEnd);
-    		
-    		int currencyEnd = qrData.indexOf('\n', memoEnd+1);
-    		if(currencyEnd == -1) {
-    			raiseError(R.string.error_bad_format);    			
-    		}
-    		String currency = qrData.substring(memoEnd+1, currencyEnd);
-    		
-			List<PayPalHelper.PaymentDetails> payments = 
-				new ArrayList<PayPalHelper.PaymentDetails>();
-    		int currentIdx = currencyEnd+1;
-    		while(currentIdx < qrData.length()) {
-    			currentIdx = parsePaymentsLine(payments, currentIdx);
-    		}
-    		
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ProcessPayment.this);
+
+    		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ProcessPayment.this);
             String sender = prefs.getString(Preferences.PAYPAL_USERNAME, "");
     		
 			try {
 				final String payKey = 
-					PayPalHelper.startPayment(
-						ProcessPayment.this, sender, memo, currency, payments
-					);
+					PayPalHelper.startPayment(ProcessPayment.this, sender, request);
 	    		if(payKey == null) {
 	    			handler.post(new MyHTMLRedirectHandler(ProcessPayment.PAYMENT_OK_URL));
 	    			return;
+	    		}	    		
+	
+	    		if(entryUri != null) {
+		    		try {
+		    			ContentValues values = new ContentValues();
+		    			values.put("payKey", payKey);
+						ProcessPayment.this.
+							getContentResolver().
+								update(entryUri, values, null, null);
+		    		} catch(Exception ex) {
+		    			Log.e("PortaPayments", "Error updating history", ex);
+		    		}
 	    		}
-	    		
-	    		try {
-	    			final ContentValues[] values = new ContentValues[payments.size()];
-	    			for(int i = 0 ; i < payments.size() ; i++) {
-	    				PayPalHelper.PaymentDetails payment = payments.get(i);
-	    				values[i] = new ContentValues();
-		    			values[i].put("payKey", payKey);
-		    			values[i].put("currency", currency);
-	    				values[i].put("recipientNumber", i);
-	    				values[i].put("recipient", payment.recipient);
-	    				values[i].put("amount", payment.amount);
-	    				values[i].put("eTime", System.currentTimeMillis());
-	    			}
-    				ProcessPayment.this.
-						getContentResolver().
-							bulkInsert(PaymentsProvider.CONTENT_URI, values);
-	    		} catch(Exception ex) {
-	    			Log.e("PortaPayments", "Error recording history", ex);
-	    		}
-	    		
 	    		
 	    		final StringBuilder paypalAuthURLBuilder = new StringBuilder(PAY_URL_STUB_LENGTH+payKey.length());
 	    		paypalAuthURLBuilder.append(PAY_URL_STUB);
@@ -269,44 +256,11 @@ public final class ProcessPayment extends Activity {
 			} catch (IOException e) {
 				Log.e("PortaPayments", "Error talking to PayPal.", e );
 				raiseError(R.string.error_io);
-			} catch (BarcodeFormatException bfe) {
-				raiseError(R.string.error_bad_format);				
 			} catch (Exception e) {
 				Log.e("PortaPayments", "Non-specific error", e);
 				raiseError(R.string.error_general);
 			}
     	}
-
-        /**
-         * Parse a payments line.
-         */
-        
-        private int parsePaymentsLine(List<PayPalHelper.PaymentDetails> payments, final int startIdx) {
-        	int lineEnd = qrData.indexOf('\n', startIdx);
-        	if(lineEnd == -1) {
-        		lineEnd = qrData.length();
-        	}
-        	
-        	char c;
-        	int pos = startIdx;
-        	StringBuilder dataBuilder = new StringBuilder(lineEnd - startIdx);
-        	while(pos < lineEnd && (c = qrData.charAt(pos)) != '_') {
-	        	dataBuilder.append(c);
-	        	pos++;
-        	}       
-        	
-        	Log.e("PortaPayments", "Reading : "+qrData.substring(startIdx, lineEnd));
-        	if(pos > lineEnd-6 ) {
-        		throw new BarcodeFormatException("Error in line format : "+qrData.substring(startIdx, lineEnd));
-        	}
-
-        	final PayPalHelper.PaymentDetails payment = new PayPalHelper.PaymentDetails();
-        	payment.amount = dataBuilder.toString();        	
-        	payment.recipient = qrData.substring(pos+1, lineEnd);
-        	payments.add(payment);
-        	
-    		return lineEnd+1;
-        }
     }
     
     /**
@@ -344,21 +298,6 @@ public final class ProcessPayment extends Activity {
 					ProcessPayment.this.finish();
 				}
     		});
-    	}
-    }
-    
-    /**
-     * Exception thrown if the barcode format is incorrect
-     */
-    
-    private final static class BarcodeFormatException extends RuntimeException {
-    	/**
-		 * Generated Serial Number
-		 */
-		private static final long serialVersionUID = -1787478441287761462L;
-
-		BarcodeFormatException(final String message) {
-    		super(message);
     	}
     }
 }
