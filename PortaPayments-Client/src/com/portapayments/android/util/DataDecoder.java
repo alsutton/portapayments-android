@@ -66,7 +66,7 @@ public final class DataDecoder {
     	}       
     	
     	Log.e("PortaPayments", "Reading : "+data.substring(startIdx, lineEnd));
-    	if(pos > lineEnd-6 ) {
+    	if(pos > lineEnd-2 ) {
 			throw new FormatException();
     	}
 
