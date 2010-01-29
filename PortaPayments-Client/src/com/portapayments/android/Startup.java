@@ -89,6 +89,11 @@ public final class Startup extends Activity {
         ((Button)findViewById(R.id.create_qr_button)).setOnClickListener(
         		new OnClickListener() {
 					public void onClick(View v) {
+				    	final String recipient = getPayPalUsername();
+				        if(recipient == null) {
+				        	return;
+				        }
+				        
 						Intent startIntent = new Intent(Startup.this, CreateRequestActivity.class);
 						Startup.this.startActivity(startIntent);
 					}
