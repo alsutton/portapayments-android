@@ -142,7 +142,8 @@ public final class CreateRequestActivity extends Activity {
 			    			Log.e("PortaPayments", "Exception preparing code", ex);
 			    		}
 			    	}
-					CreateRequestActivity.this.startActivity(startIntent);					
+					CreateRequestActivity.this.startActivity(startIntent);		
+					CreateRequestActivity.this.finish();
 				}    			
     		});
     }
