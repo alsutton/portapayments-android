@@ -3,8 +3,6 @@ package com.portapayments.android.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.util.Log;
-
 public final class DataDecoder {
 
 	/**
@@ -65,7 +63,6 @@ public final class DataDecoder {
         	pos++;
     	}       
     	
-    	Log.e("PortaPayments", "Reading : "+data.substring(startIdx, lineEnd));
     	if(pos > lineEnd-2 ) {
 			throw new FormatException();
     	}
