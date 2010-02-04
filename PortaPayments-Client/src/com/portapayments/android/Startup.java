@@ -1,15 +1,21 @@
 package com.portapayments.android;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.Camera;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.Editable;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +30,16 @@ import com.google.zxing.client.android.CaptureActivity;
 import com.google.zxing.client.android.Intents;
 
 public final class Startup extends Activity {
+	/**
+	 * The list of camera builds which don't have auto-focus
+	 */
+	
+	private static final List<String> nonAutofocusDevices = new ArrayList<String>();
+	
+	static {
+		nonAutofocusDevices.add("htc_tattoo");
+	}
+	
 	/**
 	 * The request code for scanning a payment
 	 */
@@ -65,10 +81,7 @@ public final class Startup extends Activity {
 				        	return;
 				        }
 
-						Intent startIntent = new Intent(Startup.this, CaptureActivity.class);
-						startIntent.setAction(Intents.Scan.ACTION);
-						startIntent.putExtra(Intents.Scan.MODE, Intents.Scan.QR_CODE_MODE);
-						Startup.this.startActivityForResult(startIntent, SCAN_PAYMENT_CODE);
+				        checkAutofocusAndStartScanner();
 					}
         		}
         	);
@@ -120,19 +133,6 @@ public final class Startup extends Activity {
 					return false;
 				}    				
 			});
-/*        
-        ((Button)findViewById(R.id.view_history_button)).setOnClickListener(
-        		new OnClickListener() {
-					public void onClick(View v) {
-						Intent startIntent = new Intent(Startup.this, History.class);
-						Startup.this.startActivity(startIntent);
-					}
-        		}
-        	);
-*/        
-//        EditText amountBox = (EditText)findViewById(R.id.amount);
-//        amountBox.requestFocus();
-//        amountBox.setSelection(0, amountBox.getText().length());
 
         currencyButton = (Button)findViewById(R.id.currency);
         currencyButton.setOnClickListener(new OnClickListener() {
@@ -148,6 +148,8 @@ public final class Startup extends Activity {
         
         getPayPalUsername();
         readQrButton.requestFocus();
+        
+        Log.d("PortaPayments", "Hello, we're on a "+Build.PRODUCT);
     }
 
     /**
@@ -160,6 +162,36 @@ public final class Startup extends Activity {
         &&	resultCode == RESULT_OK) {
            	parseScannedData( data.getStringExtra(Intents.Scan.RESULT) );
         }
+    }
+    
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+      super.onCreateOptionsMenu(menu);
+      menu.add(0, ABOUT_MENU_OPTION, 0, R.string.menu_about)
+      	.setIcon(android.R.drawable.ic_menu_info_details);
+      menu.add(0, SETTINGS_MENU_OPTION, 0, R.string.menu_settings)
+          .setIcon(android.R.drawable.ic_menu_preferences);
+      return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+      switch (item.getItemId()) {
+	      case ABOUT_MENU_OPTION:
+	          AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	          builder.setTitle(getString(R.string.about_title));
+	          builder.setMessage(getString(R.string.about_message));
+	          builder.setIcon(R.drawable.icon);
+	          builder.setPositiveButton(R.string.dialog_ok, null);
+	          builder.show();
+	          break;
+	      case SETTINGS_MENU_OPTION:
+			Intent startIntent = new Intent(Startup.this, Preferences.class);
+			Startup.this.startActivity(startIntent);
+			break;
+	  }
+      return super.onOptionsItemSelected(item);
     }
     
     /**
@@ -234,7 +266,6 @@ public final class Startup extends Activity {
     
     /**
      * Starts the currency selector.
-     * 
      */
     protected void selectCurrency() {
     	Builder builder = new AlertDialog.Builder(this);
@@ -267,34 +298,51 @@ public final class Startup extends Activity {
         builder.show();
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-      super.onCreateOptionsMenu(menu);
-      menu.add(0, ABOUT_MENU_OPTION, 0, R.string.menu_about)
-      	.setIcon(android.R.drawable.ic_menu_info_details);
-      menu.add(0, SETTINGS_MENU_OPTION, 0, R.string.menu_settings)
-          .setIcon(android.R.drawable.ic_menu_preferences);
-      return true;
+    /**
+     * Checks the camera has an autofocus option and handles warning the user
+     * or starting the scanner.
+     */
+    
+    private void checkAutofocusAndStartScanner() {
+    	Camera camera = Camera.open();
+    	try {
+    		if(nonAutofocusDevices.contains(Build.PRODUCT)) {
+    			warnAboutAutofocus();
+    			return;
+    		} 
+    			
+    		startScanner();
+    	} finally {
+    		camera.release();
+    	}
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-      switch (item.getItemId()) {
-	      case ABOUT_MENU_OPTION:
-	          AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	          builder.setTitle(getString(R.string.about_title));
-	          builder.setMessage(getString(R.string.about_message));
-	          builder.setIcon(R.drawable.icon);
-	          builder.setPositiveButton(R.string.dialog_ok, null);
-	          builder.show();
-	          break;
-	      case SETTINGS_MENU_OPTION:
-			Intent startIntent = new Intent(Startup.this, Preferences.class);
-			Startup.this.startActivity(startIntent);
-			break;
-	  }
-      return super.onOptionsItemSelected(item);
+    
+    /**
+     * Warn the user about their device not having autofocus
+     */
+    
+    private void warnAboutAutofocus() {
+    	new AlertDialog.Builder(this)
+		.setIcon(android.R.drawable.ic_dialog_info)
+		.setTitle(R.string.dlg_non_autofocus_title)
+		.setMessage(R.string.dlg_non_autofocus)
+		.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				startScanner();
+			}
+		})
+		.show();    	
+    }
+    
+    /**
+     * Starts the barcode scanner
+     */
+    
+    private void startScanner() {
+		Intent startIntent = new Intent(Startup.this, CaptureActivity.class);
+		startIntent.setAction(Intents.Scan.ACTION);
+		startIntent.putExtra(Intents.Scan.MODE, Intents.Scan.QR_CODE_MODE);
+		Startup.this.startActivityForResult(startIntent, SCAN_PAYMENT_CODE);
     }
     
     /**
