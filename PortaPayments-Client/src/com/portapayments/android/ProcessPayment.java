@@ -38,7 +38,7 @@ public final class ProcessPayment extends Activity {
 	 * The URL stub for passing the payment authentication to PayPal
 	 */
 
-	private final static String PAY_URL_STUB = "https://www.sandbox.paypal.com/webscr?cmd=_ap-payment&paykey=";
+	private final static String PAY_URL_STUB = "https://www.paypal.com/webscr?cmd=_ap-payment&paykey=";
 	private final static int PAY_URL_STUB_LENGTH = PAY_URL_STUB.length();
 	
 	/**
