@@ -95,20 +95,6 @@
 						android:layout_alignParentRight="true"
 						android:text="@string/create_qr_button_text"/>
 
-<!-- 			<TextView	android:layout_width="fill_parent" 
-			    		android:layout_height="wrap_content" 
-			    		android:text="@string/view_history_title"
-			    		android:layout_marginTop="10dip"
-			    		android:layout_marginBottom="5dip"
-			    		android:gravity="center"
-			    		android:background="#003366"
-			    		android:textSize="6pt"
-			    		android:textColor="#FFFFFF"/>
-			<Button
-				android:id="@+id/view_history_button"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:text="@string/view_history_button_text"/> -->
 		</LinearLayout>
 
 	</ScrollView>
@@ -123,6 +109,6 @@
 							admobsdk:textColor="#000000"
 							admobsdk:keywords="Android"
 							admobsdk:refreshInterval="60"
-							admobsdk:testing="true"
+							admobsdk:testing="false"
 	               />
 </LinearLayout>	
