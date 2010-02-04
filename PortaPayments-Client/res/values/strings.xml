@@ -11,6 +11,8 @@
 
 	<string name="processing_message">The payment is being prepared...</string>
 	<string name="dlg_error_title">An Error Occurred</string>
+	<string name="dlg_non_autofocus_title">No Auto-Focus Camera</string>
+	<string name="dlg_non_autofocus">Your device does not have an auto-focus camera so you may experience problems scanning requests.</string>
 	<string name="error_bad_format">The scanned code could not be understood.</string>
 	
 	<string name="error_io">An error occurred when talking to PayPal.</string>
@@ -29,7 +31,6 @@
 	<string name="create_qr">Create Multiple-Recipient Code</string>
 	<string name="create_qr_button_text">Enter Payment Request Details</string>
 	<string name="create_request_instructions">Please enter each recipient and the amount they should receive below;</string>
-	
 	<string name="note_default">Note: Paid using PortaPayments</string>
 	<string name="create_total">Total :</string>
 	<string name="no_paypalid_dialog_title">Missing Email Address</string>
