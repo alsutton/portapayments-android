@@ -25,7 +25,7 @@ public final class PayPalHelper {
 	 * The endpoint URL for paypal requests.
 	 */
 	
-	private static final String PAYPAL_URL = "https://svcs.sandbox.paypal.com/AdaptivePayments/Pay/";
+	private static final String PAYPAL_URL = "https://svcs.paypal.com/AdaptivePayments/Pay/";
 
 	/**
 	 * Method to make a payment between a sender and receiver
@@ -58,7 +58,7 @@ public final class PayPalHelper {
 		headers.put("X-PAYPAL-SECURITY-SIGNATURE","AGkOsAbzHqAoa5KajZ8KTeHzbH6-AD9Ogr36rPgfyiyskE63m2KemnVG");
 		headers.put("X-PAYPAL-REQUEST-DATA-FORMAT", "NV"); 
 		headers.put("X-PAYPAL-RESPONSE-DATA-FORMAT", "NV");  
-		headers.put("X-PAYPAL-APPLICATION-ID", "APP-80W284485P519543T");
+		headers.put("X-PAYPAL-APPLICATION-ID", "APP-98D95394ER368501R");
 		
 
 		StringBuilder requestBody = new StringBuilder();
