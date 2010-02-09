@@ -25,7 +25,7 @@ public final class PayPalHelper {
 	 * The endpoint URL for paypal requests.
 	 */
 	
-	private static final String PAYPAL_URL = "https://svcs.paypal.com/AdaptivePayments/Pay/";
+	private static final String PAYPAL_URL = "https://svcs.paypal.com/AdaptivePayments/Pay";
 
 	/**
 	 * Method to make a payment between a sender and receiver
@@ -53,9 +53,9 @@ public final class PayPalHelper {
 		} catch(Exception ex) {
 			; // Do nothing, device ID is optional.
 		}
-		headers.put("X-PAYPAL-SECURITY-USERID", "paypal_1223368472_biz_api1.alsutton.com"); 
-		headers.put("X-PAYPAL-SECURITY-PASSWORD","1223368483"); 
-		headers.put("X-PAYPAL-SECURITY-SIGNATURE","AGkOsAbzHqAoa5KajZ8KTeHzbH6-AD9Ogr36rPgfyiyskE63m2KemnVG");
+		headers.put("X-PAYPAL-SECURITY-USERID", "al.sutton_api1.alsutton.com"); 
+		headers.put("X-PAYPAL-SECURITY-PASSWORD","SEFL5JWBMZK5XBT3"); 
+		headers.put("X-PAYPAL-SECURITY-SIGNATURE","A7t6WVepwZEodQtX6.nl6AH70Jx2AQW-ulTKK1KkONrFywEm0ADrXmqi");
 		headers.put("X-PAYPAL-REQUEST-DATA-FORMAT", "NV"); 
 		headers.put("X-PAYPAL-RESPONSE-DATA-FORMAT", "NV");  
 		headers.put("X-PAYPAL-APPLICATION-ID", "APP-98D95394ER368501R");
@@ -91,12 +91,15 @@ public final class PayPalHelper {
 		requestBody.append("&memo="+request.memo);
 		requestBody.append("&clientDetails.applicationId=PortaPayments");
         
+		Log.d("PortaPayments", "Sending request for PayKey");
         Map<String,String> results = postData(headers, requestBody.toString());
+		Log.d("PortaPayments", "Sent request for PayKey");
         if(results == null) {
         	throw new PayPalException("PayPal was unable to start the transaction.");
         }
         
         final String ack = results.get("responseEnvelope.ack");
+		Log.d("PortaPayments", "Ack status : "+ack);
         if(ack != null && "Failure".equals(ack)) {
         	throw new PayPalExceptionWithErrorCode("PayPal generated an error ", results.get("error(0).errorId"));
         }
