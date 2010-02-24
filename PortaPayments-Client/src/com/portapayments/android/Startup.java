@@ -6,9 +6,11 @@ import java.util.List;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,9 +19,11 @@ import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
@@ -141,9 +145,21 @@ public final class Startup extends Activity {
 			}        	
         });
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         if(currencyButton.getText() == null || currencyButton.getText().length() == 0) {
-	        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 	        currencyButton.setText(prefs.getString(Preferences.DEFAULT_CURRENCY, "USD"));
+        }
+        boolean aboutShown = prefs.getBoolean("about_shown", false);
+        if(!aboutShown) {
+        	try {
+	        	showAbout();
+	        	Editor editor = prefs.edit();
+	        	editor.putBoolean("about_shown", true);
+	        	editor.commit();
+        	} catch(Exception ex) {
+        		Log.e("PortaPayments", "Error blocking about screen.", ex);
+        	}
         }
         
         getPayPalUsername();
@@ -179,12 +195,7 @@ public final class Startup extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
       switch (item.getItemId()) {
 	      case ABOUT_MENU_OPTION:
-	          AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	          builder.setTitle(getString(R.string.about_title));
-	          builder.setMessage(getString(R.string.about_message));
-	          builder.setIcon(R.drawable.icon);
-	          builder.setPositiveButton(R.string.dialog_ok, null);
-	          builder.show();
+	    	  showAbout();
 	          break;
 	      case SETTINGS_MENU_OPTION:
 			Intent startIntent = new Intent(Startup.this, Preferences.class);
@@ -315,6 +326,19 @@ public final class Startup extends Activity {
     	} finally {
     		camera.release();
     	}
+    }
+    
+    /**
+     * Show the about screen.
+     */
+    
+    private void showAbout() {
+  	  LayoutInflater inflater = 
+		  (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+      AlertDialog.Builder builder = new AlertDialog.Builder(this);
+      builder.setView(inflater.inflate(R.layout.about, (ViewGroup) findViewById(R.id.about_root)));
+      builder.setPositiveButton(R.string.dialog_ok, null);
+      builder.show();
     }
     
     /**
