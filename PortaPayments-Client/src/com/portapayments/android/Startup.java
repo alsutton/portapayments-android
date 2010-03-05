@@ -198,6 +198,7 @@ public final class Startup extends Activity {
             Intent data) {
         if (requestCode == SCAN_PAYMENT_CODE
         &&	resultCode == RESULT_OK) {
+    		FlurryAgent.onEvent("Barcode Scanner returned a result");
            	parseScannedData( data.getStringExtra(Intents.Scan.RESULT) );
         }
     }
@@ -234,13 +235,19 @@ public final class Startup extends Activity {
     private void parseScannedData(final String data) {
     	if(data != null && data.length() > 3) {
 			if(data.startsWith("r\n")) {
+				FlurryAgent.onEvent("Barcode Scanner returned an r code");
 		    	Intent startIntent = new Intent(this, ProcessPayment.class);
 		    	startIntent.putExtra(ProcessPayment.PAYMENT_DATA_EXTRA, data);
 		    	startActivity(startIntent);
 		    	return;
 	    	} else if (data.startsWith("s\n")) {
+				FlurryAgent.onEvent("Barcode Scanner returned an s code");
 	    		return;
+	    	}  else {
+				FlurryAgent.onEvent("Barcode Scanner returned an unknown code");
 	    	}
+    	} else {
+			FlurryAgent.onEvent("Barcode Scanner returned an too-short code");    		
     	}
     	
 		raiseError(R.string.error_bad_format);
@@ -339,11 +346,13 @@ public final class Startup extends Activity {
     private void checkAutofocusAndStartScanner() {
     	Camera camera = Camera.open();
     	try {
-    		if(nonAutofocusDevices.contains(Build.PRODUCT)) {
+/*			Disabled for now.
+      		if(nonAutofocusDevices.contains(Build.PRODUCT)) {
+ 
     			warnAboutAutofocus();
     			return;
     		} 
-    			
+*/    			
     		startScanner();
     	} finally {
     		camera.release();
@@ -367,7 +376,7 @@ public final class Startup extends Activity {
      * Warn the user about their device not having autofocus
      */
     
-    private void warnAboutAutofocus() {
+/*    private void warnAboutAutofocus() {
     	new AlertDialog.Builder(this)
 		.setIcon(android.R.drawable.ic_dialog_info)
 		.setTitle(R.string.dlg_non_autofocus_title)
@@ -379,7 +388,7 @@ public final class Startup extends Activity {
 		})
 		.show();    	
     }
-    
+*/    
     /**
      * Starts the barcode scanner
      */
@@ -388,6 +397,7 @@ public final class Startup extends Activity {
 		Intent startIntent = new Intent(Startup.this, CaptureActivity.class);
 		startIntent.setAction(Intents.Scan.ACTION);
 		startIntent.putExtra(Intents.Scan.MODE, Intents.Scan.QR_CODE_MODE);
+		FlurryAgent.onEvent("Barcode Scanner Started");
 		Startup.this.startActivityForResult(startIntent, SCAN_PAYMENT_CODE);
     }
     
