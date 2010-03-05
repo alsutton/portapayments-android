@@ -125,7 +125,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
   private boolean playBeep;
   private boolean vibrate;
   private Source source;
-  private String sourceUrl;
   private Vector<BarcodeFormat> decodeFormats;
   private String characterSet;
 
@@ -185,14 +184,12 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
           dataString.contains(PRODUCT_SEARCH_URL_SUFFIX)) {
         // Scan only products and send the result to mobile Product Search.
         source = Source.PRODUCT_SEARCH_LINK;
-        sourceUrl = dataString;
         decodeFormats = PRODUCT_FORMATS;
         resetStatusView();
       } else if (dataString != null && dataString.equals(ZXING_URL)) {
         // Scan all formats and handle the results ourselves.
         // TODO: In the future we could allow the hyperlink to include a URL to send the results to.
         source = Source.ZXING_LINK;
-        sourceUrl = dataString;
         decodeFormats = null;
         resetStatusView();
       } else {
