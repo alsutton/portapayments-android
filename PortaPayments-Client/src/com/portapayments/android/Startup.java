@@ -235,13 +235,11 @@ public final class Startup extends Activity {
     private void parseScannedData(final String data) {
     	if(data != null && data.length() > 3) {
 			if(data.startsWith("r\n")) {
-				FlurryAgent.onEvent("Barcode Scanner returned an r code");
 		    	Intent startIntent = new Intent(this, ProcessPayment.class);
 		    	startIntent.putExtra(ProcessPayment.PAYMENT_DATA_EXTRA, data);
 		    	startActivity(startIntent);
 		    	return;
 	    	} else if (data.startsWith("s\n")) {
-				FlurryAgent.onEvent("Barcode Scanner returned an s code");
 	    		return;
 	    	}  else {
 				FlurryAgent.onEvent("Barcode Scanner returned an unknown code");
