@@ -20,6 +20,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.flurry.android.FlurryAgent;
 import com.portapayments.android.database.PaymentsProvider;
 import com.portapayments.android.paypal.PayPalHelper;
 import com.portapayments.android.paypal.PayPalHelper.PayPalException;
@@ -163,6 +164,26 @@ public final class ProcessPayment extends Activity {
     	new Thread( new MyPayPalCommunicationThread(codeText) ).start();
     }
    
+    /**
+     * Start the flurry session
+     */
+    
+    @Override
+    public void onStart() {
+    	super.onStart();
+    	FlurryAgent.onStartSession(this, "F6XKDGEXRCNXKZVIMBID");
+    }
+    
+    /**
+     * Stop the flurry session
+     */
+    
+    @Override
+    public void onStop() {
+    	FlurryAgent.onEndSession(this);
+    	super.onStop();
+    }
+    
     /**
      * Raise an error.
      * 

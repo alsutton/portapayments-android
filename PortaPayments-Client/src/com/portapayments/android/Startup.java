@@ -3,6 +3,10 @@ package com.portapayments.android;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.flurry.android.FlurryAgent;
+import com.portapayments.android.zxing.CaptureActivity;
+import com.portapayments.android.zxing.Intents;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -29,9 +33,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.EditText;
-
-import com.google.zxing.client.android.CaptureActivity;
-import com.google.zxing.client.android.Intents;
 
 public final class Startup extends Activity {
 	/**
@@ -169,6 +170,26 @@ public final class Startup extends Activity {
         Log.d("PortaPayments", "Hello, we're on a "+Build.PRODUCT);
     }
 
+    /**
+     * Start the flurry session
+     */
+    
+    @Override
+    public void onStart() {
+    	super.onStart();
+    	FlurryAgent.onStartSession(this, "F6XKDGEXRCNXKZVIMBID");
+    }
+    
+    /**
+     * Stop the flurry session
+     */
+    
+    @Override
+    public void onStop() {
+    	FlurryAgent.onEndSession(this);
+    	super.onStop();
+    }
+    
     /**
      * Handles the response from the scanner.
      */

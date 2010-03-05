@@ -17,6 +17,7 @@ import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.flurry.android.FlurryAgent;
 import com.portapayments.android.ErrorPoster.EndAppOnCancelListener;
 import com.portapayments.android.ErrorPoster.EndAppOnClickListener;
 import com.portapayments.android.database.PaymentsProvider;
@@ -70,6 +71,26 @@ public final class History extends Activity {
 			}	
         });
     }
+    /**
+     * Start the flurry session
+     */
+    
+    @Override
+    public void onStart() {
+    	super.onStart();
+    	FlurryAgent.onStartSession(this, "F6XKDGEXRCNXKZVIMBID");
+    }
+    
+    /**
+     * Stop the flurry session
+     */
+    
+    @Override
+    public void onStop() {
+    	FlurryAgent.onEndSession(this);
+    	super.onStop();
+    }
+    
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
