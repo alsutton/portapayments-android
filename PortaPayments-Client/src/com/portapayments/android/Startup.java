@@ -150,6 +150,7 @@ public final class Startup extends Activity {
         if(currencyButton.getText() == null || currencyButton.getText().length() == 0) {
 	        currencyButton.setText(prefs.getString(Preferences.DEFAULT_CURRENCY, "USD"));
         }
+        
         boolean aboutShown = prefs.getBoolean("about_shown", false);
         if(!aboutShown) {
         	try {
