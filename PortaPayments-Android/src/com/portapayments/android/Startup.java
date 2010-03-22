@@ -1,12 +1,5 @@
 package com.portapayments.android;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.flurry.android.FlurryAgent;
-import com.portapayments.android.zxing.CaptureActivity;
-import com.portapayments.android.zxing.Intents;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -34,17 +27,11 @@ import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.flurry.android.FlurryAgent;
+import com.portapayments.android.zxing.CaptureActivity;
+import com.portapayments.android.zxing.Intents;
+
 public final class Startup extends Activity {
-	/**
-	 * The list of camera builds which don't have auto-focus
-	 */
-	
-	private static final List<String> nonAutofocusDevices = new ArrayList<String>();
-	
-	static {
-		nonAutofocusDevices.add("htc_tattoo");
-	}
-	
 	/**
 	 * The request code for scanning a payment
 	 */
@@ -344,13 +331,6 @@ public final class Startup extends Activity {
     private void checkAutofocusAndStartScanner() {
     	Camera camera = Camera.open();
     	try {
-/*			Disabled for now.
-      		if(nonAutofocusDevices.contains(Build.PRODUCT)) {
- 
-    			warnAboutAutofocus();
-    			return;
-    		} 
-*/    			
     		startScanner();
     	} finally {
     		camera.release();
