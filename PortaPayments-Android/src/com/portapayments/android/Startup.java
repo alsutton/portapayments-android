@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -153,8 +154,6 @@ public final class Startup extends Activity {
         
         getPayPalUsername();
         readQrButton.requestFocus();
-        
-        Log.d("PortaPayments", "Hello, we're on a "+Build.PRODUCT);
     }
 
     /**
@@ -226,8 +225,13 @@ public final class Startup extends Activity {
 		    	startIntent.putExtra(ProcessPayment.PAYMENT_DATA_EXTRA, data);
 		    	startActivity(startIntent);
 		    	return;
-	    	} else if (data.startsWith("s\n")) {
-	    		return;
+	    	} else if (data.startsWith("http://")) {
+		    	Intent startIntent = new Intent();
+		    	startIntent.setAction(Intent.ACTION_VIEW);
+		    	startIntent.addCategory(Intent.CATEGORY_BROWSABLE);
+		    	startIntent.setData(Uri.parse(data));
+		    	startActivity(startIntent);
+		    	return;
 	    	}  else {
 				FlurryAgent.onEvent("Barcode Scanner returned an unknown code");
 	    	}
