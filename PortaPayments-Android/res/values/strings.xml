@@ -25,8 +25,6 @@
 	
 	<string name="about_title">PortaPayments</string>
 	<string name="about_message">(c)2010 Funky Android Ltd., All Rights Reserved.\nIncludes Portions of ZXing which is licensed under the Apache license v2.0.</string>
-	<string name="about_paypal_message">PortaPayments is a PayPal Developer Challenge Entrant.</string>
-	<string name="about_paypal_message_2">Please vote this app using the instructions at\nhttp://bit.ly/9ajgbu </string>
 	<string name="create_qr_quick">Create "Pay-Me" Code</string>
 	<string name="create_qr_quick_button_text">Create Payment Request</string>
 	<string name="create_qr">Create Multiple-Recipient Code</string>
