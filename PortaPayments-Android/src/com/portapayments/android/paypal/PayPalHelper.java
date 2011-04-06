@@ -78,8 +78,8 @@ public final class PayPalHelper {
 			requestBody.append(").amount=");
 			requestBody.append(details.amount);
 		}
-		requestBody.append("&returnUrl=http://appengine.portapayments.com/androidapp/PayOK.jsp");
-		requestBody.append("&cancelUrl=http://appengine.portapayments.com/androidapp/PayCancelled.jsp");
+		requestBody.append("&returnUrl=http://portapayments.appspot.com/androidapp/PayOK.jsp");
+		requestBody.append("&cancelUrl=http://portapayments.appspot.com/androidapp/PayCancelled.jsp");
 		requestBody.append("&requestEnvelope.errorLanguage=en_US");
 		requestBody.append("&clientDetails.ipAddress=127.0.0.1");
 		requestBody.append("&clientDetails.deviceId=");
