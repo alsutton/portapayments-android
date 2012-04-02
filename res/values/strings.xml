@@ -34,7 +34,8 @@
 	<string name="create_total">Total :</string>
 	<string name="no_paypalid_dialog_title">Missing Email Address</string>
 	<string name="no_paypalid_dialog_message">Please enter the email address you use for PayPal.</string>
-
+	<string name="defaultAmount">1.00</string>
+	
 	<string name="request_payment">Create Payment Request</string>
 	<string name="scan_request">Scan Payment Request</string>
 
