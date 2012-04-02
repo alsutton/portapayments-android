@@ -1,22 +1,23 @@
 package com.portapayments.android;
 
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.ByteMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
-public final class DisplayQRCode extends Activity {
+public final class DisplayQRCode extends SherlockActivity {
 	
 	/**
 	 * The intent extra parameters.
@@ -69,8 +70,8 @@ public final class DisplayQRCode extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.show_qr_code);
+        super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
         ((Button)findViewById(R.id.done_button)).setOnClickListener(
         		new View.OnClickListener() {
@@ -89,6 +90,16 @@ public final class DisplayQRCode extends Activity {
     		getViewTreeObserver().
     		addOnGlobalLayoutListener(layoutListener);
         firstLayout = true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+      switch (item.getItemId()) {
+	      case android.R.id.home:
+              finish();
+              return true;
+	  }
+      return super.onOptionsItemSelected(item);
     }
     
     /**

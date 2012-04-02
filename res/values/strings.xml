@@ -30,6 +30,7 @@
 	<string name="create_qr">Create Multiple-Recipient Code</string>
 	<string name="create_qr_button_text">Enter Payment Request Details</string>
 	<string name="create_request_instructions">Please enter each recipient and the amount they should receive below;</string>
+	<string name="create_image_description">QR Code for payment</string>
 	<string name="note_default">Note: Paid using PortaPayments</string>
 	<string name="create_total">Total :</string>
 	<string name="no_paypalid_dialog_title">Missing Email Address</string>

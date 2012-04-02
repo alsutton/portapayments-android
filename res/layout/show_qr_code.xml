@@ -5,24 +5,15 @@
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
   android:orientation="vertical"
-  android:gravity="center"
-  android:background="#FFFFFF">
-	<TextView	android:layout_width="fill_parent" 
-	    		android:layout_height="wrap_content" 
-	    		android:text="PortaPayments"
-	    		android:gravity="center"
-	    		android:background="#003366"
-	    		android:textSize="12pt"
-	    		android:textColor="#FFFFFF"
-	    		android:layout_marginBottom="5dip"/>
+  android:gravity="center">
 	<TextView	android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
-				android:textColor="#000000"
 				android:gravity="center"
 				android:text="@string/show_code_instructions"/>
     <ImageView 	android:id="@+id/qr_code"
+        		android:contentDescription="@string/create_image_description"
                	android:layout_width="fill_parent"
-               	android:layout_height="wrap_content"
+               	android:layout_height="0dip"
                	android:layout_weight="1"
                	android:layout_gravity="center_horizontal"
                	android:scaleType="center"/>
@@ -31,7 +22,6 @@
          		android:layout_width="fill_parent"
               	android:layout_height="wrap_content"
               	android:layout_gravity="center_horizontal"
-              	android:layout_alignParentBottom="true"
               	android:gravity="center"
               	android:text="@string/done"/>
 </LinearLayout>
