@@ -3,9 +3,8 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="lib" path="lib/zxing-android.jar"/>
-	<classpathentry kind="lib" path="lib/zxing-core.jar"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ActionBarSherlock"/>
+	<classpathentry kind="lib" path="libs/zxing-android.jar"/>
+	<classpathentry kind="lib" path="libs/zxing-core.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
