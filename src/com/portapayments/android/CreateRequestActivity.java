@@ -4,7 +4,10 @@ import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
 
-import android.app.Activity;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,17 +18,14 @@ import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public final class CreateRequestActivity extends Activity {
+public final class CreateRequestActivity extends SherlockActivity {
 	/**
 	 * The IDs of the about menu options
 	 */
@@ -68,11 +68,13 @@ public final class CreateRequestActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.create_request);
+        super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
     	((EditText)(findViewById(R.id.payment_1).findViewById(R.id.recipient))).
         	setText(getPayPalUsername());
+    	((EditText)(findViewById(R.id.payment_1).findViewById(R.id.amount))).
+    		setText(R.string.defaultAmount);
     	
     	for(int i = 0 ; i < CreateRequestActivity.PAYMENT_SECTION_IDS.length ; i++) {
     		final View paymentView = findViewById(PAYMENT_SECTION_IDS[i]);
@@ -171,6 +173,9 @@ public final class CreateRequestActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
       switch (item.getItemId()) {
+	      case android.R.id.home:
+              finish();
+              return true;
 	      case ABOUT_MENU_OPTION:
 	          AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	          builder.setTitle(getString(R.string.about_title));
