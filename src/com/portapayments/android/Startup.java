@@ -1,6 +1,5 @@
 package com.portapayments.android;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -17,20 +16,20 @@ import android.text.Editable;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.portapayments.android.zxing.CaptureActivity;
 import com.portapayments.android.zxing.Intents;
 
-public final class Startup extends Activity {
+public final class Startup extends SherlockActivity {
 	/**
 	 * The request code for scanning a payment
 	 */
@@ -60,7 +59,6 @@ public final class Startup extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main);
                 
         Button readQrButton = (Button)findViewById(R.id.read_qr_button);
