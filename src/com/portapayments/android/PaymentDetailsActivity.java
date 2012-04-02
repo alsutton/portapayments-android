@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 
-import com.flurry.android.FlurryAgent;
 import com.portapayments.android.database.PaymentsProvider;
 
 public final class PaymentDetailsActivity extends Activity {
@@ -67,26 +66,6 @@ public final class PaymentDetailsActivity extends Activity {
     		cursor.close();
     	}
     	
-    }
-
-    /**
-     * Start the flurry session
-     */
-    
-    @Override
-    public void onStart() {
-    	super.onStart();
-    	FlurryAgent.onStartSession(this, "F6XKDGEXRCNXKZVIMBID");
-    }
-    
-    /**
-     * Stop the flurry session
-     */
-    
-    @Override
-    public void onStop() {
-    	FlurryAgent.onEndSession(this);
-    	super.onStop();
     }
         
     /**

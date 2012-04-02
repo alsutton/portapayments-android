@@ -12,7 +12,6 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.flurry.android.FlurryAgent;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.ByteMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
@@ -90,26 +89,6 @@ public final class DisplayQRCode extends Activity {
     		getViewTreeObserver().
     		addOnGlobalLayoutListener(layoutListener);
         firstLayout = true;
-    }
-    
-    /**
-     * Start the flurry session
-     */
-    
-    @Override
-    public void onStart() {
-    	super.onStart();
-    	FlurryAgent.onStartSession(this, "F6XKDGEXRCNXKZVIMBID");
-    }
-    
-    /**
-     * Stop the flurry session
-     */
-    
-    @Override
-    public void onStop() {
-    	FlurryAgent.onEndSession(this);
-    	super.onStop();
     }
     
     /**

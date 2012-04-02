@@ -4,8 +4,6 @@ import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
 
-import com.flurry.android.FlurryAgent;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -150,26 +148,6 @@ public final class CreateRequestActivity extends Activity {
     		});
     }
 
-    /**
-     * Start the flurry session
-     */
-    
-    @Override
-    public void onStart() {
-    	super.onStart();
-    	FlurryAgent.onStartSession(this, "F6XKDGEXRCNXKZVIMBID");
-    }
-    
-    /**
-     * Stop the flurry session
-     */
-    
-    @Override
-    public void onStop() {
-    	FlurryAgent.onEndSession(this);
-    	super.onStop();
-    }
-    
     /**
      * On resume updates the total.
      */

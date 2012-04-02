@@ -28,7 +28,6 @@ import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.flurry.android.FlurryAgent;
 import com.portapayments.android.zxing.CaptureActivity;
 import com.portapayments.android.zxing.Intents;
 
@@ -155,26 +154,6 @@ public final class Startup extends Activity {
         getPayPalUsername();
         readQrButton.requestFocus();
     }
-
-    /**
-     * Start the flurry session
-     */
-    
-    @Override
-    public void onStart() {
-    	super.onStart();
-    	FlurryAgent.onStartSession(this, "F6XKDGEXRCNXKZVIMBID");
-    }
-    
-    /**
-     * Stop the flurry session
-     */
-    
-    @Override
-    public void onStop() {
-    	FlurryAgent.onEndSession(this);
-    	super.onStop();
-    }
     
     /**
      * Handles the response from the scanner.
@@ -184,7 +163,6 @@ public final class Startup extends Activity {
             Intent data) {
         if (requestCode == SCAN_PAYMENT_CODE
         &&	resultCode == RESULT_OK) {
-    		FlurryAgent.onEvent("Barcode Scanner returned a result");
            	parseScannedData( data.getStringExtra(Intents.Scan.RESULT) );
         }
     }
@@ -233,10 +211,10 @@ public final class Startup extends Activity {
 		    	startActivity(startIntent);
 		    	return;
 	    	}  else {
-				FlurryAgent.onEvent("Barcode Scanner returned an unknown code");
+				Log.e("PortaPayments", "Barcode Scanner returned an unknown code");
 	    	}
     	} else {
-			FlurryAgent.onEvent("Barcode Scanner returned an too-short code");    		
+			Log.e("PortaPayments", "Barcode Scanner returned a code which was too short.");
     	}
     	
 		raiseError(R.string.error_bad_format);
@@ -379,7 +357,6 @@ public final class Startup extends Activity {
 		Intent startIntent = new Intent(Startup.this, CaptureActivity.class);
 		startIntent.setAction(Intents.Scan.ACTION);
 		startIntent.putExtra(Intents.Scan.MODE, Intents.Scan.QR_CODE_MODE);
-		FlurryAgent.onEvent("Barcode Scanner Started");
 		Startup.this.startActivityForResult(startIntent, SCAN_PAYMENT_CODE);
     }
     
